@@ -130,9 +130,9 @@
                     </div>
                 </div>
 
-                <!-- Big Expanded Neon Blue Animated Stickman taking up the right side space -->
+                <!-- Big Expanded Neon Blue Animated Stickman with Full Height Room -->
                 <div class="flex flex-col items-center">
-                    <canvas id="stickmanCanvas" width="70" height="75" class="cursor-pointer filter drop-shadow-[0_0_12px_#0a84ff]" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
+                    <canvas id="stickmanCanvas" width="75" height="90" class="cursor-pointer filter drop-shadow-[0_0_12px_#0a84ff]" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
                 </div>
             </div>
             
@@ -270,9 +270,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.3.5</span>
+            <span class="text-iosGray2 font-medium">v1.3.6</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Big Screen Neon Stickman Edition</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Uncut Stickman Edition</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -349,7 +349,7 @@
 
     <!-- Application JavaScript -->
     <script>
-        const APP_VERSION = 'v1.3.5';
+        const APP_VERSION = 'v1.3.6';
 
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
@@ -453,7 +453,7 @@
         }
 
         // -------------------------------------------------------------
-        // BIG SCALED GLOWING NEON BLUE ANIMATED STICKMAN ENGINE (100 ACTIONS)
+        // FULLY PADDED GLOWING NEON BLUE ANIMATED STICKMAN ENGINE (100 ACTIONS)
         // -------------------------------------------------------------
         let currentActionIndex = 0;
         let animationFrameId = null;
@@ -468,7 +468,7 @@
                 render: function(ctx, f, w, h) {
                     const baseAction = STICKMAN_ACTIONS[i % 20].render;
                     ctx.save();
-                    ctx.translate(Math.sin(f * 0.05 + i) * 3, Math.cos(f * 0.05) * 3);
+                    ctx.translate(Math.sin(f * 0.05 + i) * 2, Math.cos(f * 0.05) * 2);
                     baseAction(ctx, f + i * 10, w, h);
                     ctx.restore();
                 }
@@ -493,10 +493,10 @@
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
                 ctx.save();
-                // Scale up coordinates for a bigger stickman representation
-                ctx.translate(10, 8);
-                ctx.scale(1.3, 1.3);
-                action.render(ctx, frame, canvas.width / 1.3, canvas.height / 1.3);
+                // Perfectly centered translation and scaling with ample bottom/top headroom
+                ctx.translate(14, 10);
+                ctx.scale(1.2, 1.2);
+                action.render(ctx, frame, canvas.width / 1.2, canvas.height / 1.2);
                 ctx.restore();
 
                 frame++;
