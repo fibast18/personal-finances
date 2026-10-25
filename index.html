@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Rico Finances - Real-Time Cash Flow Tracker</title>
     
+    <!-- Prevent iOS Safari Caching Old Versions -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <!-- iOS Home Screen App Icon & Web App Settings -->
     <link rel="apple-touch-icon" sizes="180x180" href="Rico ID.JPG">
     <link rel="icon" type="image/jpeg" href="Rico ID.JPG">
@@ -89,9 +94,10 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-xs font-medium text-iosGray3 flex items-center gap-1">
-                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-iosBlue"></i>
-                    ₱ PHP
+                <!-- Online/Offline Status Indicator -->
+                <span id="syncStatusBadge" class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5">
+                    <span id="syncDot" class="w-2 h-2 rounded-full bg-iosGreen animate-pulse"></span>
+                    <span id="syncStatusText">Online</span>
                 </span>
                 <button onclick="openModal()" class="w-9 h-9 rounded-full bg-iosBlue hover:bg-blue-600 active:scale-95 transition flex items-center justify-center text-white shadow-glow-blue">
                     <i data-lucide="plus" class="w-5 h-5"></i>
@@ -250,17 +256,17 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.0.1</span>
+            <span class="text-iosGray2 font-medium">v1.2.0</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Local Offline Storage</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Offline Supported & Auto-Sync</p>
     </footer>
 
-    <!-- Modal Drawer for Adding Transaction -->
+    <!-- Modal Drawer for Adding / Editing Transaction -->
     <div id="transactionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <div class="bg-iosCardDark border border-iosBorderDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[90vh] overflow-y-auto">
             
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-iosBorderDark">
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <h3 id="modalHeaderTitle" class="text-base font-bold text-white flex items-center gap-2">
                     <i data-lucide="plus-circle" class="w-5 h-5 text-iosBlue"></i>
                     Add Transaction
                 </h3>
@@ -270,6 +276,7 @@
             </div>
 
             <form id="txForm" onsubmit="saveTransaction(event)" class="space-y-4">
+                <input type="hidden" id="editingTxId" value="">
                 
                 <!-- Income/Expense Selector Switch -->
                 <div class="grid grid-cols-2 bg-black/50 p-1 rounded-2xl border border-iosBorderDark">
@@ -319,12 +326,56 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full bg-iosBlue hover:bg-blue-600 text-white font-semibold py-3 rounded-2xl transition shadow-glow-blue mt-2">
+                <button type="submit" id="submitModalBtn" class="w-full bg-iosBlue hover:bg-blue-600 text-white font-semibold py-3 rounded-2xl transition shadow-glow-blue mt-2">
                     Save Transaction
                 </button>
             </form>
         </div>
     </div>
+
+    <!-- Register Inline Service Worker for Offline Mode -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'rico-finances-v1.2.0';
+                const ASSETS = [
+                    './',
+                    './index.html',
+                    './Rico ID.JPG',
+                    'https://cdn.tailwindcss.com',
+                    'https://unpkg.com/lucide@latest',
+                    'https://cdn.jsdelivr.net/npm/chart.js'
+                ];
+
+                self.addEventListener('install', (e) => {
+                    e.waitUntil(
+                        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+                    );
+                });
+
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(
+                        caches.keys().then((keys) => {
+                            return Promise.all(
+                                keys.map((key) => {
+                                    if (key !== CACHE_NAME) return caches.delete(key);
+                                })
+                            );
+                        }).then(() => self.clients.claim())
+                    );
+                });
+
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        fetch(e.request).catch(() => caches.match(e.request))
+                    );
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(err => console.log('SW Registration error:', err));
+        }
+    </script>
 
     <!-- Application JavaScript -->
     <script>
@@ -357,12 +408,45 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateGreeting();
             updateCategoryDropdown();
+            initNetworkStatus();
             renderApp();
             lucide.createIcons();
             
             // Set default date input to today
             document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
         });
+
+        // Network Online / Offline Status Monitoring & Sync
+        function initNetworkStatus() {
+            window.addEventListener('online', handleNetworkChange);
+            window.addEventListener('offline', handleNetworkChange);
+            handleNetworkChange();
+        }
+
+        function handleNetworkChange() {
+            const isOnline = navigator.onLine;
+            const badge = document.getElementById('syncStatusBadge');
+            const dot = document.getElementById('syncDot');
+            const statusText = document.getElementById('syncStatusText');
+
+            const pendingCount = transactions.filter(t => t.synced === false).length;
+
+            if (isOnline) {
+                if (pendingCount > 0) {
+                    // Sync pending entries
+                    transactions = transactions.map(t => ({ ...t, synced: true }));
+                    localStorage.setItem('rico_finances_txs', JSON.stringify(transactions));
+                }
+                badge.className = 'px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5';
+                dot.className = 'w-2 h-2 rounded-full bg-iosGreen animate-pulse';
+                statusText.textContent = 'Online';
+            } else {
+                badge.className = 'px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosOrange flex items-center gap-1.5';
+                dot.className = 'w-2 h-2 rounded-full bg-iosOrange';
+                statusText.textContent = pendingCount > 0 ? `Offline (${pendingCount})` : 'Offline';
+            }
+            renderTransactions();
+        }
 
         // Dynamic Time-Based Greeting Function
         function updateGreeting() {
@@ -473,6 +557,7 @@
             listEl.innerHTML = filtered.map(t => {
                 const isExpense = t.type === 'expense';
                 const catObj = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].find(c => c.name === t.category) || { icon: 'tag', color: '#8e8e93' };
+                const isUnsynced = t.synced === false;
 
                 return `
                     <div class="bg-iosCardDark border border-iosBorderDark/80 rounded-2xl p-3.5 flex items-center justify-between gap-3 hover:border-iosGray/30 transition">
@@ -481,7 +566,10 @@
                                 <i data-lucide="${catObj.icon}" class="w-5 h-5"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-xs font-bold text-white truncate">${escapeHtml(t.desc)}</p>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-xs font-bold text-white truncate">${escapeHtml(t.desc)}</p>
+                                    ${isUnsynced ? '<span class="px-1.5 py-0.2 text-[9px] rounded-full bg-iosOrange/20 text-iosOrange font-medium">Unsynced</span>' : ''}
+                                </div>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-[10px] text-iosGray">${t.date}</span>
                                     <span class="text-[10px] px-1.5 py-0.2 rounded bg-black/40 text-iosGray2 border border-iosBorderDark/50">${t.category}</span>
@@ -492,6 +580,9 @@
                             <span class="text-sm font-extrabold ${isExpense ? 'text-iosRed' : 'text-iosGreen'}">
                                 ${isExpense ? '-' : '+'}${formatPHP(t.amount)}
                             </span>
+                            <button onclick="editTransaction(${t.id})" class="text-iosGray hover:text-iosBlue p-1 transition" title="Edit">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
                             <button onclick="deleteTransaction(${t.id})" class="text-iosGray hover:text-iosRed p-1 transition" title="Delete">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -592,6 +683,14 @@
 
         // Modal Control Functions
         function openModal() {
+            document.getElementById('editingTxId').value = '';
+            document.getElementById('modalHeaderTitle').innerHTML = `
+                <i data-lucide="plus-circle" class="w-5 h-5 text-iosBlue"></i>
+                Add Transaction
+            `;
+            document.getElementById('submitModalBtn').textContent = 'Save Transaction';
+            lucide.createIcons();
+
             const modal = document.getElementById('transactionModal');
             modal.classList.remove('hidden');
             setTimeout(() => {
@@ -607,6 +706,7 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 document.getElementById('txForm').reset();
+                document.getElementById('editingTxId').value = '';
                 document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
             }, 300);
         }
@@ -638,8 +738,37 @@
             amountInput.value = (currentVal + val).toFixed(2);
         }
 
+        // Edit Existing Transaction Function
+        function editTransaction(id) {
+            const tx = transactions.find(t => t.id === id);
+            if (!tx) return;
+
+            document.getElementById('editingTxId').value = tx.id;
+            setTxType(tx.type);
+            
+            document.getElementById('txAmount').value = tx.amount;
+            document.getElementById('txCategory').value = tx.category;
+            document.getElementById('txDesc').value = tx.desc;
+            document.getElementById('txDate').value = tx.date;
+
+            document.getElementById('modalHeaderTitle').innerHTML = `
+                <i data-lucide="pencil" class="w-5 h-5 text-iosBlue"></i>
+                Edit Transaction
+            `;
+            document.getElementById('submitModalBtn').textContent = 'Update Transaction';
+            lucide.createIcons();
+
+            const modal = document.getElementById('transactionModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('translate-y-full');
+            }, 10);
+        }
+
         function saveTransaction(e) {
             e.preventDefault();
+            const editingId = document.getElementById('editingTxId').value;
             const amount = parseFloat(document.getElementById('txAmount').value);
             const category = document.getElementById('txCategory').value;
             let desc = document.getElementById('txDesc').value.trim();
@@ -652,17 +781,38 @@
                 desc = category;
             }
 
-            const newTx = {
-                id: Date.now(),
-                type: currentTxType,
-                amount: amount,
-                category: category,
-                desc: desc,
-                date: date
-            };
+            const isOnline = navigator.onLine;
 
-            transactions.unshift(newTx);
+            if (editingId) {
+                // Update existing transaction
+                const idx = transactions.findIndex(t => t.id == editingId);
+                if (idx !== -1) {
+                    transactions[idx] = {
+                        id: Number(editingId),
+                        type: currentTxType,
+                        amount: amount,
+                        category: category,
+                        desc: desc,
+                        date: date,
+                        synced: isOnline
+                    };
+                }
+            } else {
+                // Create new transaction
+                const newTx = {
+                    id: Date.now(),
+                    type: currentTxType,
+                    amount: amount,
+                    category: category,
+                    desc: desc,
+                    date: date,
+                    synced: isOnline
+                };
+                transactions.unshift(newTx);
+            }
+
             renderApp();
+            handleNetworkChange();
             closeModal();
         }
 
@@ -670,6 +820,7 @@
             if (confirm('Delete this transaction?')) {
                 transactions = transactions.filter(t => t.id !== id);
                 renderApp();
+                handleNetworkChange();
             }
         }
 
@@ -705,6 +856,7 @@
                     if (Array.isArray(imported)) {
                         transactions = imported;
                         renderApp();
+                        handleNetworkChange();
                         alert('Data imported successfully!');
                     }
                 } catch (err) {
@@ -718,14 +870,16 @@
         function loadSampleData() {
             if (confirm('Load sample Philippine Peso transactions? This will overwrite current entries.')) {
                 const today = new Date().toISOString().split('T')[0];
+                const isOnline = navigator.onLine;
                 transactions = [
-                    { id: 101, type: 'income', amount: 85000, category: 'Salary / Wages', desc: 'Monthly Salary', date: today },
-                    { id: 102, type: 'expense', amount: 3850.50, category: 'Food & Dining', desc: 'Supermarket Groceries', date: today },
-                    { id: 103, type: 'expense', amount: 4200.00, category: 'Bills & Utilities', desc: 'Electric & Internet Bills', date: today },
-                    { id: 104, type: 'expense', amount: 2500.00, category: 'Transportation', desc: 'Gasoline refill', date: today },
-                    { id: 105, type: 'income', amount: 12000, category: 'Business / Sales', desc: 'Project Consultancy', date: today }
+                    { id: 101, type: 'income', amount: 85000, category: 'Salary / Wages', desc: 'Monthly Salary', date: today, synced: isOnline },
+                    { id: 102, type: 'expense', amount: 3850.50, category: 'Food & Dining', desc: 'Supermarket Groceries', date: today, synced: isOnline },
+                    { id: 103, type: 'expense', amount: 4200.00, category: 'Bills & Utilities', desc: 'Electric & Internet Bills', date: today, synced: isOnline },
+                    { id: 104, type: 'expense', amount: 2500.00, category: 'Transportation', desc: 'Gasoline refill', date: today, synced: isOnline },
+                    { id: 105, type: 'income', amount: 12000, category: 'Business / Sales', desc: 'Project Consultancy', date: today, synced: isOnline }
                 ];
                 renderApp();
+                handleNetworkChange();
             }
         }
 
