@@ -82,6 +82,17 @@
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pt-safe pb-safe">
 
+    <!-- In-App Update Notification Banner (Hidden by default) -->
+    <div id="updateBanner" class="hidden bg-iosBlue text-white px-4 py-2.5 text-xs font-semibold flex items-center justify-between shadow-lg sticky top-0 z-40">
+        <span class="flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i>
+            New update available for Rico Finances!
+        </span>
+        <button onclick="applyAppUpdate()" class="bg-white text-iosBlue px-3 py-1 rounded-full text-[11px] font-bold shadow-sm active:scale-95 transition">
+            Update Now
+        </button>
+    </div>
+
     <!-- Header Section -->
     <header class="sticky top-0 z-30 bg-black/80 backdrop-blur-xl border-b border-iosBorderDark px-4 py-3 transition-all duration-300">
         <div class="max-w-md mx-auto flex items-center justify-between">
@@ -256,6 +267,10 @@
                 </button>
                 <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
             </div>
+            <button onclick="checkForUpdatesManual()" class="w-full py-2 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosBlue text-xs font-medium hover:bg-iosBlue/20 transition flex items-center justify-center gap-1.5">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                Check for Updates
+            </button>
         </section>
 
     </main>
@@ -265,9 +280,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.3.0</span>
+            <span class="text-iosGray2 font-medium">v1.3.1</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Animated Neon Stickman Edition</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; In-App Auto-Update Shield</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -342,52 +357,10 @@
         </div>
     </div>
 
-    <!-- Register Inline Service Worker for Offline Mode & Cache -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.3.0';
-                const ASSETS = [
-                    './',
-                    './index.html',
-                    './Rico ID.JPG',
-                    'https://cdn.tailwindcss.com',
-                    'https://unpkg.com/lucide@latest',
-                    'https://cdn.jsdelivr.net/npm/chart.js'
-                ];
-
-                self.addEventListener('install', (e) => {
-                    e.waitUntil(
-                        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
-                    );
-                });
-
-                self.addEventListener('activate', (e) => {
-                    e.waitUntil(
-                        caches.keys().then((keys) => {
-                            return Promise.all(
-                                keys.map((key) => {
-                                    if (key !== CACHE_NAME) return caches.delete(key);
-                                })
-                            );
-                        }).then(() => self.clients.claim())
-                    );
-                });
-
-                self.addEventListener('fetch', (e) => {
-                    e.respondWith(
-                        fetch(e.request).catch(() => caches.match(e.request))
-                    );
-                });
-            `;
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).catch(err => console.log('SW Registration error:', err));
-        }
-    </script>
-
     <!-- Application JavaScript -->
     <script>
+        const APP_VERSION = 'v1.3.1';
+
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
             { name: 'Shopping & Retail', icon: 'shopping-bag', color: '#ff375f' },
@@ -436,7 +409,62 @@
             lucide.createIcons();
             
             document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+            
+            // Background update check on startup
+            setTimeout(checkForAppUpdates, 2000);
         });
+
+        // -------------------------------------------------------------
+        // IN-APP AUTO-UPDATE CHECKER
+        // -------------------------------------------------------------
+        async function checkForAppUpdates() {
+            if (!navigator.onLine) return;
+            try {
+                const response = await fetch('./index.html?_=' + new Date().getTime(), { cache: 'no-store' });
+                const htmlText = await response.text();
+                const match = htmlText.match(/APP_VERSION\s*=\s*'([^']+)'/);
+                if (match && match[1]) {
+                    const remoteVersion = match[1];
+                    if (remoteVersion !== APP_VERSION) {
+                        document.getElementById('updateBanner').classList.remove('hidden');
+                        lucide.createIcons();
+                    }
+                }
+            } catch (e) {
+                // Ignore fetch errors when offline
+            }
+        }
+
+        function checkForUpdatesManual() {
+            if (!navigator.onLine) {
+                alert('You are currently offline. Connect to the internet to check for updates.');
+                return;
+            }
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Checking...`;
+            lucide.createIcons();
+
+            checkForAppUpdates().then(() => {
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    lucide.createIcons();
+                    if (document.getElementById('updateBanner').classList.contains('hidden')) {
+                        alert('Rico Finances is already up to date!');
+                    }
+                }, 1000);
+            });
+        }
+
+        function applyAppUpdate() {
+            // Clear browser cache for this page and reload fresh code
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            window.location.reload(true);
+        }
 
         // -------------------------------------------------------------
         // GLOWING NEON BLUE ANIMATED STICKMAN ENGINE
@@ -466,7 +494,6 @@
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Neon Glow Effects
                 ctx.strokeStyle = '#64d2ff';
                 ctx.fillStyle = '#64d2ff';
                 ctx.shadowColor = '#0a84ff';
@@ -479,7 +506,6 @@
 
                 frame++;
                 
-                // Change action automatically every 300 frames (~5 secs)
                 if (frame % 300 === 0) {
                     currentActionIndex = (currentActionIndex + 1) % STICKMAN_ACTIONS.length;
                     document.getElementById('stickmanActionLabel').textContent = STICKMAN_ACTIONS[currentActionIndex].name;
@@ -497,7 +523,6 @@
             document.getElementById('stickmanActionLabel').textContent = STICKMAN_ACTIONS[currentActionIndex].name;
         }
 
-        // Draw Helper Functions for Actions
         function drawHead(ctx, x, y, r = 7) {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -515,20 +540,20 @@
             const wave = Math.sin(f * 0.15) * 12;
             const cx = w / 2, cy = h / 2 - 5;
             drawHead(ctx, cx, cy - 18);
-            drawLine(ctx, cx, cy - 11, cx, cy + 12); // Spine
-            drawLine(ctx, cx, cy - 5, cx - 12, cy + 5); // Left arm
-            drawLine(ctx, cx, cy - 5, cx + 12, cy - 15 + wave); // Waving arm
-            drawLine(ctx, cx, cy + 12, cx - 10, cy + 30); // Left leg
-            drawLine(ctx, cx, cy + 12, cx + 10, cy + 30); // Right leg
+            drawLine(ctx, cx, cy - 11, cx, cy + 12);
+            drawLine(ctx, cx, cy - 5, cx - 12, cy + 5);
+            drawLine(ctx, cx, cy - 5, cx + 12, cy - 15 + wave);
+            drawLine(ctx, cx, cy + 12, cx - 10, cy + 30);
+            drawLine(ctx, cx, cy + 12, cx + 10, cy + 30);
         }
 
         function drawPushups(ctx, f, w, h) {
             const push = Math.sin(f * 0.1) * 8;
             const cx = w / 2 - 5, cy = h / 2 + 10 + push;
             drawHead(ctx, cx - 22, cy - 2);
-            drawLine(ctx, cx - 15, cy, cx + 15, cy); // Body
-            drawLine(ctx, cx - 5, cy, cx - 5, cy + 12 - push); // Arm
-            drawLine(ctx, cx + 15, cy, cx + 25, cy + 12); // Leg
+            drawLine(ctx, cx - 15, cy, cx + 15, cy);
+            drawLine(ctx, cx - 5, cy, cx - 5, cy + 12 - push);
+            drawLine(ctx, cx + 15, cy, cx + 25, cy + 12);
         }
 
         function drawJacks(ctx, f, w, h) {
@@ -536,10 +561,10 @@
             const cx = w / 2, cy = h / 2 - 5;
             drawHead(ctx, cx, cy - 18);
             drawLine(ctx, cx, cy - 11, cx, cy + 12);
-            drawLine(ctx, cx, cy - 5, cx - 15, cy - 10 + spread); // Left Arm
-            drawLine(ctx, cx, cy - 5, cx + 15, cy - 10 + spread); // Right Arm
-            drawLine(ctx, cx, cy + 12, cx - 5 - spread, cy + 30); // Left Leg
-            drawLine(ctx, cx, cy + 12, cx + 5 + spread, cy + 30); // Right Leg
+            drawLine(ctx, cx, cy - 5, cx - 15, cy - 10 + spread);
+            drawLine(ctx, cx, cy - 5, cx + 15, cy - 10 + spread);
+            drawLine(ctx, cx, cy + 12, cx - 5 - spread, cy + 30);
+            drawLine(ctx, cx, cy + 12, cx + 5 + spread, cy + 30);
         }
 
         function drawDance(ctx, f, w, h) {
@@ -609,8 +634,8 @@
             drawLine(ctx, cx, cy - 11, cx, cy + 12);
             drawLine(ctx, cx, cy - 5, cx - 12, cy + 5);
             drawLine(ctx, cx, cy - 5, cx + 12, cy - 5);
-            drawLine(ctx, cx, cy + 12, cx - 8, cy + 30); // Standing leg
-            drawLine(ctx, cx, cy + 12, cx + 20, cy + 12 - kick); // Karate Kick leg
+            drawLine(ctx, cx, cy + 12, cx - 8, cy + 30);
+            drawLine(ctx, cx, cy + 12, cx + 20, cy + 12 - kick);
         }
 
         function drawFlex(ctx, f, w, h) {
@@ -618,8 +643,8 @@
             const cx = w / 2, cy = h / 2 - 5;
             drawHead(ctx, cx, cy - 18);
             drawLine(ctx, cx, cy - 11, cx, cy + 12);
-            drawLine(ctx, cx, cy - 5, cx - 14 - pulse, cy - 18); // Left Bicep
-            drawLine(ctx, cx, cy - 5, cx + 14 + pulse, cy - 18); // Right Bicep
+            drawLine(ctx, cx, cy - 5, cx - 14 - pulse, cy - 18);
+            drawLine(ctx, cx, cy - 5, cx + 14 + pulse, cy - 18);
             drawLine(ctx, cx, cy + 12, cx - 10, cy + 30);
             drawLine(ctx, cx, cy + 12, cx + 10, cy + 30);
         }
