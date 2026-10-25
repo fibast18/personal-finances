@@ -243,10 +243,6 @@
                 </button>
                 <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
             </div>
-            <button onclick="loadSampleData()" class="w-full py-2 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosBlue text-xs font-medium hover:bg-iosBlue/20 transition flex items-center justify-center gap-1.5">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                Load Sample Demo Data
-            </button>
         </section>
 
     </main>
@@ -256,7 +252,7 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.2.0</span>
+            <span class="text-iosGray2 font-medium">v1.2.1</span>
         </div>
         <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Offline Supported & Auto-Sync</p>
     </footer>
@@ -337,7 +333,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.2.0';
+                const CACHE_NAME = 'rico-finances-v1.2.1';
                 const ASSETS = [
                     './',
                     './index.html',
@@ -433,7 +429,6 @@
 
             if (isOnline) {
                 if (pendingCount > 0) {
-                    // Sync pending entries
                     transactions = transactions.map(t => ({ ...t, synced: true }));
                     localStorage.setItem('rico_finances_txs', JSON.stringify(transactions));
                 }
@@ -776,7 +771,6 @@
 
             if (!amount || amount <= 0) return;
 
-            // Default description to category name if left empty
             if (!desc) {
                 desc = category;
             }
@@ -784,7 +778,6 @@
             const isOnline = navigator.onLine;
 
             if (editingId) {
-                // Update existing transaction
                 const idx = transactions.findIndex(t => t.id == editingId);
                 if (idx !== -1) {
                     transactions[idx] = {
@@ -798,7 +791,6 @@
                     };
                 }
             } else {
-                // Create new transaction
                 const newTx = {
                     id: Date.now(),
                     type: currentTxType,
@@ -864,23 +856,6 @@
                 }
             };
             fileReader.readAsText(event.target.files[0]);
-        }
-
-        // Demo Data Generator
-        function loadSampleData() {
-            if (confirm('Load sample Philippine Peso transactions? This will overwrite current entries.')) {
-                const today = new Date().toISOString().split('T')[0];
-                const isOnline = navigator.onLine;
-                transactions = [
-                    { id: 101, type: 'income', amount: 85000, category: 'Salary / Wages', desc: 'Monthly Salary', date: today, synced: isOnline },
-                    { id: 102, type: 'expense', amount: 3850.50, category: 'Food & Dining', desc: 'Supermarket Groceries', date: today, synced: isOnline },
-                    { id: 103, type: 'expense', amount: 4200.00, category: 'Bills & Utilities', desc: 'Electric & Internet Bills', date: today, synced: isOnline },
-                    { id: 104, type: 'expense', amount: 2500.00, category: 'Transportation', desc: 'Gasoline refill', date: today, synced: isOnline },
-                    { id: 105, type: 'income', amount: 12000, category: 'Business / Sales', desc: 'Project Consultancy', date: today, synced: isOnline }
-                ];
-                renderApp();
-                handleNetworkChange();
-            }
         }
 
         function escapeHtml(text) {
