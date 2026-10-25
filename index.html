@@ -93,14 +93,14 @@
         </button>
     </div>
 
-    <!-- Header Section -->
-    <header class="sticky top-0 z-30 bg-black/80 backdrop-blur-xl border-b border-iosBorderDark px-4 py-3 transition-all duration-300">
+    <!-- Sticky Header Section (Retained on scroll) -->
+    <header class="sticky top-0 z-30 bg-black/85 backdrop-blur-xl border-b border-iosBorderDark px-4 py-3 transition-all duration-300">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="Rico ID.JPG" alt="Rico" class="w-11 h-11 rounded-full object-cover border-2 border-iosBlue shadow-sm">
                 <div>
                     <h1 class="text-xs font-semibold tracking-wider text-iosGray uppercase">Rico Finances</h1>
-                    <p id="userGreeting" class="text-base font-bold text-white tracking-tight">Good day, Boss Rico J.</p>
+                    <p id="userGreeting" class="text-base font-bold text-white tracking-tight">Good evening, Boss Rico J.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -270,9 +270,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.3.6</span>
+            <span class="text-iosGray2 font-medium">v1.3.7</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Uncut Stickman Edition</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Sticky Header Edition</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -349,7 +349,7 @@
 
     <!-- Application JavaScript -->
     <script>
-        const APP_VERSION = 'v1.3.6';
+        const APP_VERSION = 'v1.3.7';
 
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
@@ -493,7 +493,6 @@
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
                 ctx.save();
-                // Perfectly centered translation and scaling with ample bottom/top headroom
                 ctx.translate(14, 10);
                 ctx.scale(1.2, 1.2);
                 action.render(ctx, frame, canvas.width / 1.2, canvas.height / 1.2);
