@@ -122,9 +122,7 @@
         <section class="bg-gradient-to-br from-iosCardDark via-iosCardDark to-iosGray6 rounded-3xl p-5 border border-iosBorderDark shadow-ios-float relative overflow-hidden">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <!-- Grid Layout to lock Balance title & amount tightly together -->
-            <div class="grid grid-cols-[1fr_auto] items-start gap-4 mb-2">
-                <!-- Left Column: Title and Balance Amount -->
+            <div class="flex justify-between items-start mb-2">
                 <div>
                     <span class="text-xs font-medium uppercase tracking-wider text-iosGray block mb-1">Cash on Hand / Balance</span>
                     <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-1">
@@ -132,21 +130,17 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Healthy Badge + Stickman Directly Below -->
-                <div class="flex flex-col items-end gap-1.5">
-                    <span id="cashOnHandStatus" class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
-                        Healthy
-                    </span>
-                    <!-- Naked Glowing Neon Blue Animated Stickman with Generous Headroom -->
-                    <canvas id="stickmanCanvas" width="45" height="65" class="cursor-pointer filter drop-shadow-[0_0_8px_#0a84ff]" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
+                <!-- Big Expanded Neon Blue Animated Stickman taking up the right side space -->
+                <div class="flex flex-col items-center">
+                    <canvas id="stickmanCanvas" width="70" height="75" class="cursor-pointer filter drop-shadow-[0_0_12px_#0a84ff]" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
                 </div>
             </div>
             
+            <!-- Healthy Badge Placed Where Formula Was -->
             <div class="mb-4">
-                <p class="text-xs text-iosGray mt-1 flex items-center gap-1">
-                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
-                    Formula: Total Income - Total Expenses
-                </p>
+                <span id="cashOnHandStatus" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
+                    Healthy
+                </span>
             </div>
 
             <!-- Income vs Expense Cards Split -->
@@ -276,9 +270,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.3.4</span>
+            <span class="text-iosGray2 font-medium">v1.3.5</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Grid Aligned Layout</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Big Screen Neon Stickman Edition</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -355,7 +349,7 @@
 
     <!-- Application JavaScript -->
     <script>
-        const APP_VERSION = 'v1.3.4';
+        const APP_VERSION = 'v1.3.5';
 
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
@@ -459,7 +453,7 @@
         }
 
         // -------------------------------------------------------------
-        // GLOWING NEON BLUE ANIMATED STICKMAN ENGINE (100 ACTIONS)
+        // BIG SCALED GLOWING NEON BLUE ANIMATED STICKMAN ENGINE (100 ACTIONS)
         // -------------------------------------------------------------
         let currentActionIndex = 0;
         let animationFrameId = null;
@@ -474,7 +468,7 @@
                 render: function(ctx, f, w, h) {
                     const baseAction = STICKMAN_ACTIONS[i % 20].render;
                     ctx.save();
-                    ctx.translate(Math.sin(f * 0.05 + i) * 2, Math.cos(f * 0.05) * 2);
+                    ctx.translate(Math.sin(f * 0.05 + i) * 3, Math.cos(f * 0.05) * 3);
                     baseAction(ctx, f + i * 10, w, h);
                     ctx.restore();
                 }
@@ -493,14 +487,16 @@
                 ctx.strokeStyle = '#64d2ff';
                 ctx.fillStyle = '#64d2ff';
                 ctx.shadowColor = '#0a84ff';
-                ctx.shadowBlur = 10;
-                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 14;
+                ctx.lineWidth = 3;
                 ctx.lineCap = 'round';
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
                 ctx.save();
-                ctx.translate(0, 6);
-                action.render(ctx, frame, canvas.width, canvas.height);
+                // Scale up coordinates for a bigger stickman representation
+                ctx.translate(10, 8);
+                ctx.scale(1.3, 1.3);
+                action.render(ctx, frame, canvas.width / 1.3, canvas.height / 1.3);
                 ctx.restore();
 
                 frame++;
@@ -520,7 +516,7 @@
             currentActionIndex = Math.floor(Math.random() * STICKMAN_ACTIONS.length);
         }
 
-        function drawHead(ctx, x, y, r = 5) {
+        function drawHead(ctx, x, y, r = 6) {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
             ctx.stroke();
@@ -534,229 +530,229 @@
         }
 
         function drawWave(ctx, f, w, h) {
-            const wave = Math.sin(f * 0.15) * 8;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 10, cy + 4);
-            drawLine(ctx, cx, cy - 4, cx + 10, cy - 12 + wave);
-            drawLine(ctx, cx, cy + 8, cx - 8, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 22);
+            const wave = Math.sin(f * 0.15) * 10;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 12, cy + 5);
+            drawLine(ctx, cx, cy - 5, cx + 12, cy - 15 + wave);
+            drawLine(ctx, cx, cy + 10, cx - 10, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10, cy + 26);
         }
 
         function drawPushups(ctx, f, w, h) {
-            const push = Math.sin(f * 0.1) * 5;
-            const cx = w / 2 - 2, cy = h / 2 + 8 + push;
-            drawHead(ctx, cx - 15, cy - 2);
-            drawLine(ctx, cx - 10, cy, cx + 10, cy);
-            drawLine(ctx, cx - 3, cy, cx - 3, cy + 10 - push);
-            drawLine(ctx, cx + 10, cy, cx + 18, cy + 10);
+            const push = Math.sin(f * 0.1) * 6;
+            const cx = w / 2 - 8, cy = h / 2 + 10 + push;
+            drawHead(ctx, cx - 18, cy - 2);
+            drawLine(ctx, cx - 12, cy, cx + 12, cy);
+            drawLine(ctx, cx - 4, cy, cx - 4, cy + 12 - push);
+            drawLine(ctx, cx + 12, cy, cx + 22, cy + 12);
         }
 
         function drawJacks(ctx, f, w, h) {
-            const spread = Math.sin(f * 0.2) * 10;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 12, cy - 8 + spread);
-            drawLine(ctx, cx, cy - 4, cx + 12, cy - 8 + spread);
-            drawLine(ctx, cx, cy + 8, cx - 4 - spread, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 4 + spread, cy + 22);
+            const spread = Math.sin(f * 0.2) * 12;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 14, cy - 10 + spread);
+            drawLine(ctx, cx, cy - 5, cx + 14, cy - 10 + spread);
+            drawLine(ctx, cx, cy + 10, cx - 6 - spread, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 6 + spread, cy + 26);
         }
 
         function drawDance(ctx, f, w, h) {
-            const bounce = Math.abs(Math.sin(f * 0.15)) * 6;
-            const cx = w / 2, cy = h / 2 - bounce;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 14, cy - 12 + bounce);
-            drawLine(ctx, cx, cy - 4, cx + 14, cy + 4 - bounce);
-            drawLine(ctx, cx, cy + 8, cx - 10, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 10, cy + 16);
+            const bounce = Math.abs(Math.sin(f * 0.15)) * 8;
+            const cx = w / 2 - 4, cy = h / 2 - bounce;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 16, cy - 14 + bounce);
+            drawLine(ctx, cx, cy - 5, cx + 16, cy + 5 - bounce);
+            drawLine(ctx, cx, cy + 10, cx - 12, cy + 24);
+            drawLine(ctx, cx, cy + 10, cx + 12, cy + 20);
         }
 
         function drawFlip(ctx, f, w, h) {
             const rot = (f * 0.1) % (Math.PI * 2);
-            const cx = w / 2, cy = h / 2;
+            const cx = w / 2 - 4, cy = h / 2;
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(rot);
-            drawHead(ctx, 0, -14);
-            drawLine(ctx, 0, -9, 0, 8);
-            drawLine(ctx, 0, -4, -10, 0);
-            drawLine(ctx, 0, -4, 10, 0);
-            drawLine(ctx, 0, 8, -8, 20);
-            drawLine(ctx, 0, 8, 8, 20);
+            drawHead(ctx, 0, -16);
+            drawLine(ctx, 0, -10, 0, 10);
+            drawLine(ctx, 0, -5, -12, 0);
+            drawLine(ctx, 0, -5, 12, 0);
+            drawLine(ctx, 0, 10, -10, 24);
+            drawLine(ctx, 0, 10, 10, 24);
             ctx.restore();
         }
 
         function drawMoonwalk(ctx, f, w, h) {
             const slide = (f * 0.8) % 20 - 10;
-            const legSwing = Math.sin(f * 0.2) * 8;
-            const cx = w / 2 - slide, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 8, cy + 4);
-            drawLine(ctx, cx, cy - 4, cx + 8, cy + 4);
-            drawLine(ctx, cx, cy + 8, cx - 6 + legSwing, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8 - legSwing, cy + 22);
+            const legSwing = Math.sin(f * 0.2) * 10;
+            const cx = w / 2 - 4 - slide, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 10, cy + 5);
+            drawLine(ctx, cx, cy - 5, cx + 10, cy + 5);
+            drawLine(ctx, cx, cy + 10, cx - 8 + legSwing, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10 - legSwing, cy + 26);
         }
 
         function drawHover(ctx, f, w, h) {
-            const hover = Math.sin(f * 0.08) * 6;
-            const cx = w / 2, cy = h / 2 - 5 + hover;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 14, cy - 8);
-            drawLine(ctx, cx, cy - 4, cx + 14, cy - 8);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 20);
+            const hover = Math.sin(f * 0.08) * 8;
+            const cx = w / 2 - 4, cy = h / 2 - 6 + hover;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 16, cy - 10);
+            drawLine(ctx, cx, cy - 5, cx + 16, cy - 10);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 24);
+            drawLine(ctx, cx, cy + 10, cx + 8, cy + 24);
         }
 
         function drawStretch(ctx, f, w, h) {
-            const stretch = Math.sin(f * 0.1) * 4;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14 - stretch);
-            drawLine(ctx, cx, cy - 9 - stretch, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4 - stretch, cx - 10, cy - 18 - stretch);
-            drawLine(ctx, cx, cy - 4 - stretch, cx + 10, cy - 18 - stretch);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 22);
+            const stretch = Math.sin(f * 0.1) * 6;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16 - stretch);
+            drawLine(ctx, cx, cy - 10 - stretch, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5 - stretch, cx - 12, cy - 20 - stretch);
+            drawLine(ctx, cx, cy - 5 - stretch, cx + 12, cy - 20 - stretch);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 8, cy + 26);
         }
 
         function drawKick(ctx, f, w, h) {
-            const kick = Math.abs(Math.sin(f * 0.12)) * 18;
-            const cx = w / 2 - 3, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 10, cy + 4);
-            drawLine(ctx, cx, cy - 4, cx + 10, cy - 4);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 16, cy + 8 - kick);
+            const kick = Math.abs(Math.sin(f * 0.12)) * 22;
+            const cx = w / 2 - 6, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 12, cy + 5);
+            drawLine(ctx, cx, cy - 5, cx + 12, cy - 5);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 20, cy + 10 - kick);
         }
 
         function drawFlex(ctx, f, w, h) {
-            const pulse = Math.sin(f * 0.15) * 2;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 10 - pulse, cy - 14);
-            drawLine(ctx, cx, cy - 4, cx + 10 + pulse, cy - 14);
-            drawLine(ctx, cx, cy + 8, cx - 8, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 22);
+            const pulse = Math.sin(f * 0.15) * 3;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 12 - pulse, cy - 16);
+            drawLine(ctx, cx, cy - 5, cx + 12 + pulse, cy - 16);
+            drawLine(ctx, cx, cy + 10, cx - 10, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10, cy + 26);
         }
 
         function drawJuggling(ctx, f, w, h) {
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 12, cy - 14);
-            drawLine(ctx, cx, cy - 4, cx + 12, cy - 14);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 22);
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 14, cy - 16);
+            drawLine(ctx, cx, cy - 5, cx + 14, cy - 16);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 8, cy + 26);
             ctx.beginPath();
-            ctx.arc(cx + Math.sin(f * 0.2) * 10, cy - 22 + Math.cos(f * 0.2) * 4, 2, 0, Math.PI * 2);
-            ctx.arc(cx + Math.cos(f * 0.2) * 10, cy - 22 - Math.sin(f * 0.2) * 4, 2, 0, Math.PI * 2);
+            ctx.arc(cx + Math.sin(f * 0.2) * 12, cy - 26 + Math.cos(f * 0.2) * 5, 2.5, 0, Math.PI * 2);
+            ctx.arc(cx + Math.cos(f * 0.2) * 12, cy - 26 - Math.sin(f * 0.2) * 5, 2.5, 0, Math.PI * 2);
             ctx.fill();
         }
 
         function drawShadowbox(ctx, f, w, h) {
-            const punch = Math.sin(f * 0.3) * 12;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 12 - punch, cy - 4);
-            drawLine(ctx, cx, cy - 4, cx + 12 + punch, cy - 4);
-            drawLine(ctx, cx, cy + 8, cx - 8, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 22);
+            const punch = Math.sin(f * 0.3) * 14;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 14 - punch, cy - 5);
+            drawLine(ctx, cx, cy - 5, cx + 14 + punch, cy - 5);
+            drawLine(ctx, cx, cy + 10, cx - 10, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10, cy + 26);
         }
 
         function drawSkip(ctx, f, w, h) {
-            const hop = Math.abs(Math.sin(f * 0.2)) * 8;
-            const cx = w / 2, cy = h / 2 - hop;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 4, cx - 10, cy - 2);
-            drawLine(ctx, cx, cy - 4, cx + 10, cy - 2);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 22);
+            const hop = Math.abs(Math.sin(f * 0.2)) * 10;
+            const cx = w / 2 - 4, cy = h / 2 - hop;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 5, cx - 12, cy - 2);
+            drawLine(ctx, cx, cy - 5, cx + 12, cy - 2);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 8, cy + 26);
         }
 
         function drawSpin(ctx, f, w, h) {
             const scaleX = Math.cos(f * 0.2);
-            const cx = w / 2, cy = h / 2 - 2;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
             ctx.save();
             ctx.translate(cx, cy);
             ctx.scale(scaleX, 1);
-            drawHead(ctx, 0, -14);
-            drawLine(ctx, 0, -9, 0, 8);
-            drawLine(ctx, 0, -4, -10, -4);
-            drawLine(ctx, 0, -4, 10, -4);
-            drawLine(ctx, 0, 8, -6, 22);
-            drawLine(ctx, 0, 8, 6, 22);
+            drawHead(ctx, 0, -16);
+            drawLine(ctx, 0, -10, 0, 10);
+            drawLine(ctx, 0, -5, -12, -5);
+            drawLine(ctx, 0, -5, 12, -5);
+            drawLine(ctx, 0, 10, -8, 26);
+            drawLine(ctx, 0, 10, 8, 26);
             ctx.restore();
         }
 
         function drawBow(ctx, f, w, h) {
-            const bow = Math.sin(f * 0.1) * 10 + 10;
-            const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx - bow * 0.5, cy - 10 + bow * 0.5);
-            drawLine(ctx, cx, cy - 5, cx - bow, cy);
-            drawLine(ctx, cx - bow * 0.5, cy, cx, cy + 10);
-            drawLine(ctx, cx, cy + 10, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 10, cx + 6, cy + 22);
+            const bow = Math.sin(f * 0.1) * 12 + 12;
+            const cx = w / 2 - 4, cy = h / 2;
+            drawHead(ctx, cx - bow * 0.5, cy - 12 + bow * 0.5);
+            drawLine(ctx, cx, cy - 6, cx - bow, cy);
+            drawLine(ctx, cx - bow * 0.5, cy, cx, cy + 12);
+            drawLine(ctx, cx, cy + 12, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 12, cx + 8, cy + 26);
         }
 
         function drawTpose(ctx, f, w, h) {
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 8);
-            drawLine(ctx, cx, cy - 6, cx - 18, cy - 6);
-            drawLine(ctx, cx, cy - 6, cx + 18, cy - 6);
-            drawLine(ctx, cx, cy + 8, cx - 8, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 22);
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 10);
+            drawLine(ctx, cx, cy - 7, cx - 20, cy - 7);
+            drawLine(ctx, cx, cy - 7, cx + 20, cy - 7);
+            drawLine(ctx, cx, cy + 10, cx - 10, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10, cy + 26);
         }
 
         function drawLean(ctx, f, w, h) {
-            const lean = Math.sin(f * 0.1) * 8;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx + lean - 3, cy - 14);
-            drawLine(ctx, cx, cy + 8, cx + lean, cy - 9);
-            drawLine(ctx, cx + lean * 0.5, cy - 4, cx - 10 + lean, cy + 2);
-            drawLine(ctx, cx + lean * 0.5, cy - 4, cx + 12 + lean, cy - 8);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 22);
+            const lean = Math.sin(f * 0.1) * 10;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx + lean - 4, cy - 16);
+            drawLine(ctx, cx, cy + 10, cx + lean, cy - 10);
+            drawLine(ctx, cx + lean * 0.5, cy - 5, cx - 12 + lean, cy + 2);
+            drawLine(ctx, cx + lean * 0.5, cy - 5, cx + 14 + lean, cy - 10);
+            drawLine(ctx, cx, cy + 10, cx - 8, cy + 26);
+            drawLine(ctx, cx, cy + 10, cx + 10, cy + 26);
         }
 
         function drawSprinting(ctx, f, w, h) {
-            const stride = Math.sin(f * 0.3) * 12;
-            const cx = w / 2, cy = h / 2 - 2;
-            drawHead(ctx, cx + 4, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx + 2, cy + 8);
-            drawLine(ctx, cx + 1, cy - 4, cx - 12, cy + 4);
-            drawLine(ctx, cx + 1, cy - 4, cx + 14, cy + 2);
-            drawLine(ctx, cx + 2, cy + 8, cx - 10 + stride, cy + 22);
-            drawLine(ctx, cx + 2, cy + 8, cx + 12 - stride, cy + 22);
+            const stride = Math.sin(f * 0.3) * 14;
+            const cx = w / 2 - 4, cy = h / 2 - 2;
+            drawHead(ctx, cx + 5, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx + 2, cy + 10);
+            drawLine(ctx, cx + 1, cy - 5, cx - 14, cy + 5);
+            drawLine(ctx, cx + 1, cy - 5, cx + 16, cy + 2);
+            drawLine(ctx, cx + 2, cy + 10, cx - 12 + stride, cy + 26);
+            drawLine(ctx, cx + 2, cy + 10, cx + 14 - stride, cy + 26);
         }
 
         function drawMeditate(ctx, f, w, h) {
-            const float = Math.sin(f * 0.1) * 3;
-            const cx = w / 2, cy = h / 2 + 2 + float;
-            drawHead(ctx, cx, cy - 14);
-            drawLine(ctx, cx, cy - 9, cx, cy + 4);
-            drawLine(ctx, cx, cy - 4, cx - 12, cy + 2);
-            drawLine(ctx, cx, cy - 4, cx + 12, cy + 2);
-            drawLine(ctx, cx, cy + 4, cx - 10, cy + 16);
-            drawLine(ctx, cx, cy + 4, cx + 10, cy + 16);
+            const float = Math.sin(f * 0.1) * 4;
+            const cx = w / 2 - 4, cy = h / 2 + 3 + float;
+            drawHead(ctx, cx, cy - 16);
+            drawLine(ctx, cx, cy - 10, cx, cy + 4);
+            drawLine(ctx, cx, cy - 5, cx - 14, cy + 2);
+            drawLine(ctx, cx, cy - 5, cx + 14, cy + 2);
+            drawLine(ctx, cx, cy + 4, cx - 12, cy + 18);
+            drawLine(ctx, cx, cy + 4, cx + 12, cy + 18);
         }
 
         function drawBreakdance2(ctx, f, w, h) {
             const spin = f * 0.2;
-            const cx = w / 2, cy = h / 2 + 5;
-            drawHead(ctx, cx + Math.cos(spin) * 10, cy + Math.sin(spin) * 5);
-            drawLine(ctx, cx, cy, cx - 12, cy + 10);
-            drawLine(ctx, cx, cy, cx + 12, cy + 10);
-            drawLine(ctx, cx, cy, cx + Math.sin(spin) * 15, cy - 10);
+            const cx = w / 2 - 4, cy = h / 2 + 6;
+            drawHead(ctx, cx + Math.cos(spin) * 12, cy + Math.sin(spin) * 6);
+            drawLine(ctx, cx, cy, cx - 14, cy + 12);
+            drawLine(ctx, cx, cy, cx + 14, cy + 12);
+            drawLine(ctx, cx, cy, cx + Math.sin(spin) * 18, cy - 12);
         }
 
         // -------------------------------------------------------------
@@ -844,13 +840,13 @@
             const statusEl = document.getElementById('cashOnHandStatus');
             if (netBalance < 0) {
                 statusEl.textContent = 'Deficit';
-                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosRed/10 text-iosRed border border-iosRed/20';
+                statusEl.className = 'inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosRed/10 text-iosRed border border-iosRed/20';
             } else if (netBalance === 0) {
                 statusEl.textContent = 'Neutral';
-                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosOrange/10 text-iosOrange border border-iosOrange/20';
+                statusEl.className = 'inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosOrange/10 text-iosOrange border border-iosOrange/20';
             } else {
                 statusEl.textContent = 'Healthy';
-                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20';
+                statusEl.className = 'inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20';
             }
 
             const ratioBar = document.getElementById('expenseRatioBar');
