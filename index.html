@@ -250,7 +250,7 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.0.0</span>
+            <span class="text-iosGray2 font-medium">v1.0.1</span>
         </div>
         <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Local Offline Storage</p>
     </footer>
@@ -303,10 +303,13 @@
                     </select>
                 </div>
 
-                <!-- Description Field -->
+                <!-- Description Field (OPTIONAL) -->
                 <div>
-                    <label class="block text-xs font-medium text-iosGray mb-1">Description / Note</label>
-                    <input type="text" id="txDesc" required placeholder="e.g. Supermarket Groceries, Salary, Utilities" class="w-full bg-black/40 border border-iosBorderDark rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-iosGray/50 focus:outline-none focus:border-iosBlue transition">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-medium text-iosGray">Description / Note</label>
+                        <span class="text-[10px] text-iosGray/70">(Optional)</span>
+                    </div>
+                    <input type="text" id="txDesc" placeholder="e.g. Supermarket Groceries, Gasoline (Optional)" class="w-full bg-black/40 border border-iosBorderDark rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-iosGray/50 focus:outline-none focus:border-iosBlue transition">
                 </div>
 
                 <!-- Date Field -->
@@ -639,10 +642,15 @@
             e.preventDefault();
             const amount = parseFloat(document.getElementById('txAmount').value);
             const category = document.getElementById('txCategory').value;
-            const desc = document.getElementById('txDesc').value.trim();
+            let desc = document.getElementById('txDesc').value.trim();
             const date = document.getElementById('txDate').value;
 
-            if (!amount || amount <= 0 || !desc) return;
+            if (!amount || amount <= 0) return;
+
+            // Default description to category name if left empty
+            if (!desc) {
+                desc = category;
+            }
 
             const newTx = {
                 id: Date.now(),
