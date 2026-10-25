@@ -61,7 +61,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* Custom scrollbar for seamless iOS aesthetic */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -94,7 +93,6 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <!-- Online/Offline Status Indicator -->
                 <span id="syncStatusBadge" class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5">
                     <span id="syncDot" class="w-2 h-2 rounded-full bg-iosGreen animate-pulse"></span>
                     <span id="syncStatusText">Online</span>
@@ -252,9 +250,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.2.1</span>
+            <span class="text-iosGray2 font-medium">v1.2.2</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Offline Supported & Auto-Sync</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Persistent Safe Storage</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -329,11 +327,11 @@
         </div>
     </div>
 
-    <!-- Register Inline Service Worker for Offline Mode -->
+    <!-- Register Inline Service Worker for Offline Mode & Safe Cache -->
     <script>
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.2.1';
+                const CACHE_NAME = 'rico-finances-v1.2.2';
                 const ASSETS = [
                     './',
                     './index.html',
@@ -375,7 +373,6 @@
 
     <!-- Application JavaScript -->
     <script>
-        // Preset Categories with icons and colors
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
             { name: 'Shopping & Retail', icon: 'shopping-bag', color: '#ff375f' },
@@ -394,13 +391,27 @@
             { name: 'Other Income', icon: 'plus-circle', color: '#8e8e93' }
         ];
 
-        // State variables
-        let transactions = JSON.parse(localStorage.getItem('rico_finances_txs')) || [];
+        // Robust Storage Recovery Layer
+        let transactions = [];
+        try {
+            const localData = localStorage.getItem('rico_finances_txs');
+            const sessionBackup = localStorage.getItem('rico_finances_backup_fallback');
+            
+            if (localData && JSON.parse(localData).length > 0) {
+                transactions = JSON.parse(localData);
+            } else if (sessionBackup && JSON.parse(sessionBackup).length > 0) {
+                transactions = JSON.parse(sessionBackup);
+            } else {
+                transactions = [];
+            }
+        } catch (e) {
+            transactions = [];
+        }
+
         let currentFilter = 'all';
         let currentTxType = 'expense';
         let chartInstance = null;
 
-        // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
             updateGreeting();
             updateCategoryDropdown();
@@ -408,11 +419,9 @@
             renderApp();
             lucide.createIcons();
             
-            // Set default date input to today
             document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
         });
 
-        // Network Online / Offline Status Monitoring & Sync
         function initNetworkStatus() {
             window.addEventListener('online', handleNetworkChange);
             window.addEventListener('offline', handleNetworkChange);
@@ -430,7 +439,7 @@
             if (isOnline) {
                 if (pendingCount > 0) {
                     transactions = transactions.map(t => ({ ...t, synced: true }));
-                    localStorage.setItem('rico_finances_txs', JSON.stringify(transactions));
+                    persistData();
                 }
                 badge.className = 'px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5';
                 dot.className = 'w-2 h-2 rounded-full bg-iosGreen animate-pulse';
@@ -443,7 +452,12 @@
             renderTransactions();
         }
 
-        // Dynamic Time-Based Greeting Function
+        function persistData() {
+            const dataStr = JSON.stringify(transactions);
+            localStorage.setItem('rico_finances_txs', dataStr);
+            localStorage.setItem('rico_finances_backup_fallback', dataStr); // Dual storage backup to protect against clearing
+        }
+
         function updateGreeting() {
             const hour = new Date().getHours();
             let greeting = 'Good day';
@@ -457,7 +471,6 @@
             document.getElementById('userGreeting').textContent = `${greeting}, Boss Rico J.`;
         }
 
-        // Format Currency in PHP
         function formatPHP(amount) {
             return new Intl.NumberFormat('en-PH', {
                 style: 'currency',
@@ -466,15 +479,13 @@
             }).format(amount).replace('PHP', '₱');
         }
 
-        // Main Render Cycle
         function renderApp() {
             calculateBalances();
             renderTransactions();
             renderChartAndBreakdown();
-            localStorage.setItem('rico_finances_txs', JSON.stringify(transactions));
+            persistData();
         }
 
-        // Calculate Totals & Net Cash
         function calculateBalances() {
             const totalIncome = transactions
                 .filter(t => t.type === 'income')
@@ -490,7 +501,6 @@
             document.getElementById('totalExpenseDisplay').textContent = formatPHP(totalExpense);
             document.getElementById('netBalanceDisplay').textContent = formatPHP(netBalance);
 
-            // Status indicator
             const statusEl = document.getElementById('cashOnHandStatus');
             if (netBalance < 0) {
                 statusEl.textContent = 'Deficit';
@@ -503,7 +513,6 @@
                 statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20';
             }
 
-            // Ratio Bar
             const ratioBar = document.getElementById('expenseRatioBar');
             const ratioText = document.getElementById('expenseRatioText');
             if (totalIncome > 0) {
@@ -517,7 +526,6 @@
             }
         }
 
-        // Render Transaction Feed
         function renderTransactions() {
             const listEl = document.getElementById('transactionList');
             const emptyEl = document.getElementById('emptyState');
@@ -536,7 +544,6 @@
                 );
             }
 
-            // Sort newest first
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
 
             document.getElementById('txCount').textContent = `${filtered.length} items`;
@@ -589,7 +596,6 @@
             lucide.createIcons();
         }
 
-        // Render Donut Chart & Legend
         function renderChartAndBreakdown() {
             const expenses = transactions.filter(t => t.type === 'expense');
             const catMap = {};
@@ -644,7 +650,6 @@
                 `;
             }).join('');
 
-            // Chart.js initialization
             const ctx = document.getElementById('expenseChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
@@ -676,7 +681,6 @@
             });
         }
 
-        // Modal Control Functions
         function openModal() {
             document.getElementById('editingTxId').value = '';
             document.getElementById('modalHeaderTitle').innerHTML = `
@@ -733,7 +737,6 @@
             amountInput.value = (currentVal + val).toFixed(2);
         }
 
-        // Edit Existing Transaction Function
         function editTransaction(id) {
             const tx = transactions.find(t => t.id === id);
             if (!tx) return;
@@ -829,7 +832,6 @@
             renderTransactions();
         }
 
-        // JSON Backup and Export
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
             const dlAnchor = document.createElement('a');
