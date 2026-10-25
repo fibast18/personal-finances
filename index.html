@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Rico Finances - Real-Time Cash Flow Tracker</title>
+    
+    <!-- iOS Home Screen App Icon & Web App Settings -->
+    <link rel="apple-touch-icon" sizes="180x180" href="Rico ID.JPG">
+    <link rel="icon" type="image/jpeg" href="Rico ID.JPG">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rico Finances">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -41,924 +49,672 @@
             }
         }
     </script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        /* Smooth iOS Scrolling and Scrollbar Hide */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        /* Glassmorphism Blur */
-        .glass-nav {
-            background: rgba(28, 28, 30, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        
-        .light .glass-nav {
-            background: rgba(242, 242, 247, 0.82);
-        }
-
-        /* Dynamic notch padding for iPhone Pro Max safety */
-        .safe-top {
-            padding-top: max(1.25rem, env(safe-area-inset-top));
-        }
-        .safe-bottom {
-            padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
-        }
-
-        /* Tactile Active Feedback */
-        .active-tap:active {
-            transform: scale(0.96);
-            transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1);
-        }
-
-        /* Smooth Slide Dynamic Drawer */
-        .drawer-slide {
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Custom Scrollbar */
+        /* Custom scrollbar for seamless iOS aesthetic */
         ::-webkit-scrollbar {
             width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(142, 142, 147, 0.3);
-            border-radius: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        .pt-safe {
+            padding-top: env(safe-area-inset-top, 20px);
         }
     </style>
 </head>
-<body class="bg-black text-white font-sans antialiased h-full flex flex-col justify-center items-center overflow-x-hidden selection:bg-iosBlue selection:text-white">
+<body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pt-safe pb-safe">
 
-    <!-- Mobile Frame Outer Container (Centered on Larger Displays, Full Screen on Mobile) -->
-    <div id="appContainer" class="w-full h-full max-w-[430px] max-h-[932px] bg-black text-slate-100 flex flex-col relative overflow-hidden shadow-2xl md:rounded-[50px] border-0 md:border-[8px] border-neutral-800">
-
-        <!-- Dynamic Dynamic Island / Notch Mockup for Native Vibe -->
-        <div class="hidden md:flex justify-center w-full absolute top-0 z-50 pointer-events-none pt-2">
-            <div class="w-[120px] h-[30px] bg-black rounded-full flex items-center justify-between px-3 border border-neutral-800">
-                <div class="w-2.5 h-2.5 rounded-full bg-neutral-800"></div>
-                <div class="w-3 h-3 rounded-full bg-blue-950 border border-blue-500/30"></div>
-            </div>
-        </div>
-
-        <!-- Header Bar -->
-        <header class="safe-top pt-8 px-5 pb-3 flex items-center justify-between z-10 glass-nav border-b border-neutral-800/60 sticky top-0">
-            <div>
-                <p id="timeGreeting" class="text-xs text-iosBlue font-semibold tracking-wide uppercase flex items-center gap-1">
-                    Good day, Boss Rico J.
-                </p>
-                <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-1.5">
-                    Rico Finances <span class="w-2 h-2 rounded-full bg-iosGreen animate-pulse"></span>
-                </h1>
+    <!-- Header Section -->
+    <header class="sticky top-0 z-30 bg-black/80 backdrop-blur-xl border-b border-iosBorderDark px-4 py-3 transition-all duration-300">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="Rico ID.JPG" alt="Rico" class="w-11 h-11 rounded-full object-cover border-2 border-iosBlue shadow-sm">
+                <div>
+                    <h1 class="text-xs font-semibold tracking-wider text-iosGray uppercase">Rico Finances</h1>
+                    <p id="userGreeting" class="text-base font-bold text-white tracking-tight">Good day, Boss Rico J.</p>
+                </div>
             </div>
             <div class="flex items-center gap-2">
-                <!-- Currency Indicator (Permanent PHP) -->
-                <div class="bg-iosCardDark border border-neutral-700/60 text-xs text-iosGreen font-bold rounded-full px-3 py-1.5 flex items-center gap-1">
-                    <span>₱</span>
-                    <span>PHP</span>
-                </div>
-                <!-- Quick Settings Toggle Modal -->
-                <button id="openSettingsBtn" class="w-9 h-9 rounded-full bg-iosCardDark flex items-center justify-center border border-neutral-700/60 text-iosGray2 hover:text-white active-tap">
-                    <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                <span class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-xs font-medium text-iosGray3 flex items-center gap-1">
+                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-iosBlue"></i>
+                    ₱ PHP
+                </span>
+                <button onclick="openModal()" class="w-9 h-9 rounded-full bg-iosBlue hover:bg-blue-600 active:scale-95 transition flex items-center justify-center text-white shadow-glow-blue">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
                 </button>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Scrollable App Canvas -->
-        <main class="flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-28 space-y-5">
+    <!-- Main Content Container -->
+    <main class="max-w-md mx-auto w-full px-4 py-4 space-y-5 flex-1">
 
-            <!-- Real-Time Cash on Hand Hero Card -->
-            <section class="relative bg-gradient-to-br from-neutral-900 via-iosCardDark to-neutral-900 p-5 rounded-3xl border border-neutral-800/80 shadow-ios-float overflow-hidden group">
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute -left-10 -top-10 w-40 h-40 bg-iosGreen/10 rounded-full blur-2xl pointer-events-none"></div>
-
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-medium text-iosGray tracking-wide uppercase flex items-center gap-1">
-                        <i data-lucide="wallet" class="w-3.5 h-3.5 text-iosBlue"></i>
-                        Net Cash On Hand
-                    </span>
-                    <span id="healthBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-iosGreen/20 text-iosGreen border border-iosGreen/30">
-                        Healthy Cashflow
-                    </span>
+        <!-- Balance Summary Display Card -->
+        <section class="bg-gradient-to-br from-iosCardDark via-iosCardDark to-iosGray6 rounded-3xl p-5 border border-iosBorderDark shadow-ios-float relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex justify-between items-start mb-2">
+                <span class="text-xs font-medium uppercase tracking-wider text-iosGray">Cash on Hand / Balance</span>
+                <span id="cashOnHandStatus" class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
+                    Healthy
+                </span>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-1">
+                    <span id="netBalanceDisplay">₱0.00</span>
                 </div>
+                <p class="text-xs text-iosGray mt-1 flex items-center gap-1">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                    Formula: Total Income - Total Expenses
+                </p>
+            </div>
 
-                <!-- Live Dynamic Balance Display -->
-                <div class="my-2">
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-2xl font-semibold text-iosGray">₱</span>
-                        <h2 id="heroBalance" class="text-4xl font-extrabold tracking-tight text-white transition-all">0.00</h2>
-                        <span class="text-xs text-iosGray font-medium ml-1">PHP</span>
-                    </div>
-                </div>
-
-                <!-- Progress ratio visual bar -->
-                <div class="w-full bg-neutral-800 h-2 rounded-full overflow-hidden flex my-3">
-                    <div id="incomeRatioBar" class="bg-iosGreen h-full transition-all duration-500" style="width: 50%;"></div>
-                    <div id="expenseRatioBar" class="bg-iosRed h-full transition-all duration-500" style="width: 50%;"></div>
-                </div>
-
-                <!-- Income vs Expense Breakdown Pill Cards -->
-                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-neutral-800/80">
-                    <div class="bg-black/40 p-3 rounded-2xl border border-neutral-800/50 flex flex-col">
-                        <div class="flex items-center gap-1.5 text-iosGreen text-xs font-medium mb-1">
-                            <div class="w-5 h-5 rounded-full bg-iosGreen/15 flex items-center justify-center">
-                                <i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i>
-                            </div>
-                            Total Income
+            <!-- Income vs Expense Cards Split -->
+            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-iosBorderDark/60">
+                <div class="bg-black/30 rounded-2xl p-3 border border-iosBorderDark/40">
+                    <div class="flex items-center gap-1.5 text-iosGreen text-xs font-medium mb-1">
+                        <div class="w-5 h-5 rounded-full bg-iosGreen/20 flex items-center justify-center">
+                            <i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i>
                         </div>
-                        <span id="heroIncome" class="text-base font-bold text-slate-100">₱0.00</span>
+                        Income
                     </div>
+                    <p id="totalIncomeDisplay" class="text-lg font-bold text-white">₱0.00</p>
+                </div>
 
-                    <div class="bg-black/40 p-3 rounded-2xl border border-neutral-800/50 flex flex-col">
-                        <div class="flex items-center gap-1.5 text-iosRed text-xs font-medium mb-1">
-                            <div class="w-5 h-5 rounded-full bg-iosRed/15 flex items-center justify-center">
-                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                            </div>
-                            Total Expenses
+                <div class="bg-black/30 rounded-2xl p-3 border border-iosBorderDark/40">
+                    <div class="flex items-center gap-1.5 text-iosRed text-xs font-medium mb-1">
+                        <div class="w-5 h-5 rounded-full bg-iosRed/20 flex items-center justify-center">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                         </div>
-                        <span id="heroExpense" class="text-base font-bold text-slate-100">₱0.00</span>
+                        Expenses
+                    </div>
+                    <p id="totalExpenseDisplay" class="text-lg font-bold text-white">₱0.00</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar for Expense vs Income Ratio -->
+            <div class="mt-4">
+                <div class="flex justify-between text-[11px] text-iosGray mb-1">
+                    <span>Expense Ratio</span>
+                    <span id="expenseRatioText">0% of income</span>
+                </div>
+                <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden">
+                    <div id="expenseRatioBar" class="bg-iosBlue h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Filter & Action Ribbon -->
+        <section class="flex items-center justify-between gap-2">
+            <div class="flex bg-iosCardDark p-1 rounded-2xl border border-iosBorderDark w-full text-xs font-medium">
+                <button onclick="setFilter('all')" id="filterBtnAll" class="flex-1 py-1.5 rounded-xl transition text-center bg-iosBlue text-white shadow-sm">All</button>
+                <button onclick="setFilter('income')" id="filterBtnIncome" class="flex-1 py-1.5 rounded-xl transition text-center text-iosGray hover:text-white">Income</button>
+                <button onclick="setFilter('expense')" id="filterBtnExpense" class="flex-1 py-1.5 rounded-xl transition text-center text-iosGray hover:text-white">Expenses</button>
+            </div>
+        </section>
+
+        <!-- Analytics Overview & Donut Chart -->
+        <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-iosPurple"></i>
+                    Expense Breakdown
+                </h2>
+                <span id="categoryCountBadge" class="text-xs text-iosGray">0 Categories</span>
+            </div>
+            
+            <div id="analyticsContainer" class="flex items-center gap-4">
+                <div class="w-28 h-28 relative flex-shrink-0">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+                <div id="categoryLegend" class="flex-1 space-y-1.5 text-xs max-h-28 overflow-y-auto pr-1">
+                    <!-- Dynamic Category Progress Rows -->
+                </div>
+            </div>
+            <div id="emptyAnalytics" class="hidden text-center py-6 text-iosGray text-xs">
+                No expense data logged yet.
+            </div>
+        </section>
+
+        <!-- Transactions History Feed -->
+        <section class="space-y-3">
+            <div class="flex items-center justify-between px-1">
+                <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <i data-lucide="list" class="w-4 h-4 text-iosBlue"></i>
+                    Recent Transactions
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span id="txCount" class="text-xs text-iosGray">0 items</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-iosGray"></i>
+                <input type="text" id="searchInput" oninput="renderTransactions()" placeholder="Search description or category..." class="w-full bg-iosCardDark border border-iosBorderDark rounded-2xl pl-9 pr-4 py-2 text-xs text-white placeholder-iosGray focus:outline-none focus:border-iosBlue transition">
+            </div>
+
+            <!-- Transaction List -->
+            <div id="transactionList" class="space-y-2">
+                <!-- Transactions rendered dynamically -->
+            </div>
+
+            <!-- Empty State Display -->
+            <div id="emptyState" class="hidden text-center py-10 bg-iosCardDark/50 rounded-3xl border border-iosBorderDark/50">
+                <div class="w-12 h-12 rounded-full bg-iosCardDark flex items-center justify-center mx-auto mb-2 text-iosGray">
+                    <i data-lucide="receipt" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm font-medium text-white">No transactions found</p>
+                <p class="text-xs text-iosGray mt-0.5">Tap the "+" button above to log cash flow.</p>
+            </div>
+        </section>
+
+        <!-- Management & Backup Actions -->
+        <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
+            <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition">
+                    <i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>
+                    Export JSON
+                </button>
+                <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition">
+                    <i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>
+                    Import JSON
+                </button>
+                <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
+            </div>
+            <button onclick="loadSampleData()" class="w-full py-2 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosBlue text-xs font-medium hover:bg-iosBlue/20 transition flex items-center justify-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                Load Sample Demo Data
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Modal Drawer for Adding Transaction -->
+    <div id="transactionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-iosCardDark border border-iosBorderDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-iosBorderDark">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-iosBlue"></i>
+                    Add Transaction
+                </h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-black/40 text-iosGray hover:text-white flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form id="txForm" onsubmit="saveTransaction(event)" class="space-y-4">
+                
+                <!-- Income/Expense Selector Switch -->
+                <div class="grid grid-cols-2 bg-black/50 p-1 rounded-2xl border border-iosBorderDark">
+                    <button type="button" id="typeExpenseBtn" onclick="setTxType('expense')" class="py-2 rounded-xl text-xs font-semibold transition bg-iosRed text-white shadow">Expense</button>
+                    <button type="button" id="typeIncomeBtn" onclick="setTxType('income')" class="py-2 rounded-xl text-xs font-semibold transition text-iosGray hover:text-white">Income</button>
+                </div>
+
+                <!-- Amount Input -->
+                <div>
+                    <label class="block text-xs font-medium text-iosGray mb-1">Amount (PHP)</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-iosGray text-lg font-bold">₱</span>
+                        <input type="number" step="0.01" min="0.01" id="txAmount" required placeholder="0.00" class="w-full bg-black/40 border border-iosBorderDark rounded-2xl pl-8 pr-4 py-3 text-lg font-bold text-white placeholder-iosGray/50 focus:outline-none focus:border-iosBlue transition">
                     </div>
                 </div>
-            </section>
 
-            <!-- Interactive Visual Breakdown Toggle Section -->
-            <section class="bg-iosCardDark rounded-3xl p-4 border border-neutral-800/80">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                        <i data-lucide="pie-chart" class="w-4 h-4 text-iosPurple"></i>
-                        Spending Breakdown
-                    </h3>
-                    <div class="flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-800 text-[11px] font-medium text-iosGray">
-                        <button id="viewChartCategoryBtn" class="px-2.5 py-1 rounded-md bg-iosCardDark text-white transition-all">Category</button>
-                        <button id="viewChartRatioBtn" class="px-2.5 py-1 rounded-md hover:text-white transition-all">Type</button>
-                    </div>
+                <!-- Quick Amount Buttons -->
+                <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs">
+                    <button type="button" onclick="addAmountPreset(100)" class="px-3 py-1.5 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white">+₱100</button>
+                    <button type="button" onclick="addAmountPreset(500)" class="px-3 py-1.5 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white">+₱500</button>
+                    <button type="button" onclick="addAmountPreset(1000)" class="px-3 py-1.5 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white">+₱1,000</button>
+                    <button type="button" onclick="addAmountPreset(5000)" class="px-3 py-1.5 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white">+₱5,000</button>
+                    <button type="button" onclick="addAmountPreset(10000)" class="px-3 py-1.5 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white">+₱10,000</button>
                 </div>
 
-                <!-- Donut Chart & Category Progress -->
-                <div class="flex flex-col gap-3">
-                    <div id="chartWrapper" class="relative h-44 w-full flex items-center justify-center py-2">
-                        <canvas id="spendingChart"></canvas>
-                        <div id="chartEmptyState" class="hidden absolute inset-0 flex flex-col items-center justify-center text-iosGray text-xs">
-                            <i data-lucide="donut" class="w-8 h-8 mb-1 opacity-40"></i>
-                            <span>No data available yet</span>
-                        </div>
-                    </div>
-
-                    <!-- Top Expense Categories Progress List -->
-                    <div id="topCategoryList" class="space-y-2 pt-2 border-t border-neutral-800/60">
-                        <!-- Dynamic JS injection of categories -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Recent Activity Header & Filters -->
-            <section class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <h3 class="text-sm font-semibold text-white">Transactions</h3>
-                        <span id="txCountBadge" class="px-2 py-0.5 rounded-full bg-neutral-800 text-[11px] font-semibold text-iosGray">0</span>
-                    </div>
-                    
-                    <!-- Search toggle input expander -->
-                    <div class="relative flex items-center">
-                        <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 text-iosGray pointer-events-none"></i>
-                        <input type="text" id="searchInput" placeholder="Search..." class="w-28 focus:w-36 transition-all duration-300 bg-iosCardDark border border-neutral-800 text-xs text-white pl-8 pr-2 py-1 rounded-full focus:outline-none focus:border-iosBlue">
-                    </div>
-                </div>
-
-                <!-- Filter Chips Carousel -->
-                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs">
-                    <button class="filter-chip active-chip px-3 py-1.5 rounded-full bg-iosBlue text-white font-medium whitespace-nowrap active-tap" data-filter="all">All</button>
-                    <button class="filter-chip px-3 py-1.5 rounded-full bg-iosCardDark text-iosGray border border-neutral-800 font-medium whitespace-nowrap active-tap" data-filter="income">Income</button>
-                    <button class="filter-chip px-3 py-1.5 rounded-full bg-iosCardDark text-iosGray border border-neutral-800 font-medium whitespace-nowrap active-tap" data-filter="expense">Expense</button>
-                    <select id="categoryFilterSelect" class="bg-iosCardDark text-iosGray border border-neutral-800 rounded-full px-3 py-1.5 text-xs font-medium focus:outline-none active-tap">
-                        <option value="all">All Categories</option>
-                        <option value="Food & Dining">Food & Dining</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Business/Work">Business/Work</option>
-                        <option value="Personal">Personal</option>
-                        <option value="Salary">Salary</option>
-                        <option value="Freelance">Freelance</option>
-                        <option value="Investments">Investments</option>
+                <!-- Category Field -->
+                <div>
+                    <label class="block text-xs font-medium text-iosGray mb-1">Category</label>
+                    <select id="txCategory" class="w-full bg-black/40 border border-iosBorderDark rounded-2xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-iosBlue transition">
+                        <!-- Category options rendered dynamically -->
                     </select>
                 </div>
 
-                <!-- Transaction Feed List Container -->
-                <div id="transactionList" class="space-y-2">
-                    <!-- Dynamic rendering of transaction items -->
+                <!-- Description Field -->
+                <div>
+                    <label class="block text-xs font-medium text-iosGray mb-1">Description / Note</label>
+                    <input type="text" id="txDesc" required placeholder="e.g. Supermarket Groceries, Salary, Utilities" class="w-full bg-black/40 border border-iosBorderDark rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-iosGray/50 focus:outline-none focus:border-iosBlue transition">
                 </div>
 
-                <!-- Empty State Placeholder -->
-                <div id="emptyState" class="hidden flex flex-col items-center justify-center py-10 px-4 text-center bg-iosCardDark/50 rounded-3xl border border-dashed border-neutral-800">
-                    <div class="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center mb-3 text-iosGray">
-                        <i data-lucide="receipt" class="w-6 h-6"></i>
-                    </div>
-                    <p class="text-sm font-semibold text-white">No transactions yet</p>
-                    <p class="text-xs text-iosGray mt-1 max-w-[200px]">Tap the button below to add your first income or expense.</p>
+                <!-- Date Field -->
+                <div>
+                    <label class="block text-xs font-medium text-iosGray mb-1">Date</label>
+                    <input type="date" id="txDate" required class="w-full bg-black/40 border border-iosBorderDark rounded-2xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-iosBlue transition">
                 </div>
-            </section>
-        </main>
 
-        <!-- Floating Add Transaction Button (FAB) -->
-        <div class="absolute bottom-6 right-6 z-30">
-            <button id="openAddModalBtn" class="w-14 h-14 rounded-full bg-gradient-to-tr from-iosBlue to-blue-400 text-white flex items-center justify-center shadow-glow-blue active-tap hover:scale-105 transition-all">
-                <i data-lucide="plus" class="w-7 h-7 stroke-[2.5]"></i>
-            </button>
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-iosBlue hover:bg-blue-600 text-white font-semibold py-3 rounded-2xl transition shadow-glow-blue mt-2">
+                    Save Transaction
+                </button>
+            </form>
         </div>
-
-        <!-- Add/Edit Transaction Bottom Sheet Drawer -->
-        <div id="txModalOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end justify-center">
-            <div id="txModalContent" class="w-full max-w-[430px] bg-iosCardDark rounded-t-[32px] border-t border-neutral-700/60 p-5 shadow-2xl drawer-slide transform translate-y-full safe-bottom max-h-[85vh] overflow-y-auto no-scrollbar">
-                
-                <!-- Drawer Drag Handle Mock -->
-                <div class="w-10 h-1 bg-neutral-600 rounded-full mx-auto mb-4"></div>
-
-                <div class="flex items-center justify-between mb-4">
-                    <h3 id="modalTitle" class="text-lg font-bold text-white">New Transaction</h3>
-                    <button id="closeModalBtn" class="w-8 h-8 rounded-full bg-neutral-800 text-iosGray flex items-center justify-center active-tap">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <form id="txForm" class="space-y-4">
-                    <input type="hidden" id="editingTxId" value="">
-
-                    <!-- Type Switcher (Income vs Expense Segmented Control) -->
-                    <div class="grid grid-cols-2 gap-1 p-1 bg-black/60 rounded-2xl border border-neutral-800">
-                        <button type="button" id="typeExpenseBtn" class="py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-iosRed text-white shadow-sm">
-                            <i data-lucide="minus-circle" class="w-4 h-4"></i>
-                            Expense
-                        </button>
-                        <button type="button" id="typeIncomeBtn" class="py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-iosGray hover:text-white">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            Income
-                        </button>
-                    </div>
-
-                    <!-- Amount Input Section (Fixed ₱ PHP) -->
-                    <div>
-                        <label class="block text-xs text-iosGray font-medium mb-1">Amount (PHP)</label>
-                        <div class="relative flex items-center">
-                            <span class="absolute left-4 text-2xl font-bold text-iosGreen">₱</span>
-                            <input type="number" step="0.01" id="txAmount" required placeholder="0.00" class="w-full bg-black/40 border border-neutral-800 rounded-2xl pl-10 pr-4 py-3 text-2xl font-bold text-white focus:outline-none focus:border-iosBlue transition-all">
-                        </div>
-                    </div>
-
-                    <!-- Quick Amount Select Chips (In PHP) -->
-                    <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                        <button type="button" class="quick-amt-btn px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700/50 text-xs font-medium text-iosGray2 hover:text-white active-tap" data-val="100">+₱100</button>
-                        <button type="button" class="quick-amt-btn px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700/50 text-xs font-medium text-iosGray2 hover:text-white active-tap" data-val="500">+₱500</button>
-                        <button type="button" class="quick-amt-btn px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700/50 text-xs font-medium text-iosGray2 hover:text-white active-tap" data-val="1000">+₱1,000</button>
-                        <button type="button" class="quick-amt-btn px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700/50 text-xs font-medium text-iosGray2 hover:text-white active-tap" data-val="5000">+₱5,000</button>
-                        <button type="button" class="quick-amt-btn px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700/50 text-xs font-medium text-iosGray2 hover:text-white active-tap" data-val="10000">+₱10,000</button>
-                    </div>
-
-                    <!-- Category Selector -->
-                    <div>
-                        <label class="block text-xs text-iosGray font-medium mb-1">Category</label>
-                        <select id="txCategory" class="w-full bg-black/40 border border-neutral-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-iosBlue">
-                            <!-- Populated dynamically based on Expense vs Income -->
-                        </select>
-                    </div>
-
-                    <!-- Description Input -->
-                    <div>
-                        <label class="block text-xs text-iosGray font-medium mb-1">Description / Note</label>
-                        <input type="text" id="txDescription" placeholder="e.g. Grocery, Electricity, Client Payment" class="w-full bg-black/40 border border-neutral-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-iosBlue">
-                    </div>
-
-                    <!-- Date & Time -->
-                    <div>
-                        <label class="block text-xs text-iosGray font-medium mb-1">Date & Time</label>
-                        <input type="datetime-local" id="txDateTime" required class="w-full bg-black/40 border border-neutral-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-iosBlue">
-                    </div>
-
-                    <!-- Action Submit Button -->
-                    <button type="submit" id="saveTxBtn" class="w-full py-3.5 bg-iosBlue hover:bg-blue-600 text-white font-semibold rounded-2xl shadow-glow-blue transition-all active-tap mt-2 flex items-center justify-center gap-2">
-                        <i data-lucide="check" class="w-5 h-5"></i>
-                        Save Transaction
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Settings & Data Management Modal -->
-        <div id="settingsModalOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center px-4">
-            <div id="settingsModalContent" class="w-full max-w-[380px] bg-iosCardDark rounded-3xl border border-neutral-800 p-5 shadow-2xl space-y-4">
-                <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="settings" class="w-4 h-4 text-iosGray"></i>
-                        Settings & Data
-                    </h3>
-                    <button id="closeSettingsBtn" class="w-7 h-7 rounded-full bg-neutral-800 text-iosGray flex items-center justify-center active-tap">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-3">
-                    <button id="loadSampleDataBtn" class="w-full py-2.5 px-3 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700/60 rounded-xl text-xs font-semibold text-white flex items-center justify-between active-tap">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-iosOrange"></i>
-                            Load Sample Data (PHP)
-                        </span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-iosGray"></i>
-                    </button>
-
-                    <button id="exportDataBtn" class="w-full py-2.5 px-3 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700/60 rounded-xl text-xs font-semibold text-white flex items-center justify-between active-tap">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="download" class="w-4 h-4 text-iosGreen"></i>
-                            Export JSON Backup
-                        </span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-iosGray"></i>
-                    </button>
-
-                    <button id="clearAllDataBtn" class="w-full py-2.5 px-3 bg-iosRed/10 hover:bg-iosRed/20 border border-iosRed/30 rounded-xl text-xs font-semibold text-iosRed flex items-center justify-between active-tap">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="trash-2" class="w-4 h-4 text-iosRed"></i>
-                            Reset & Clear All Data
-                        </span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
-                    </button>
-                </div>
-
-                <div class="pt-2 text-center text-[11px] text-iosGray">
-                    Rico Finances v1.4 • PHP Currency Locked
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- Application JavaScript Logic -->
+    <!-- Application JavaScript -->
     <script>
-        // Permanent Currency Setting
-        const currencySymbol = '₱';
-        const currencyCode = 'PHP';
-
-        // State Management
-        let transactions = [];
-        let activeType = 'expense'; // 'expense' or 'income'
-        let selectedCategoryFilter = 'all';
-        let selectedTypeFilter = 'all';
-        let searchQuery = '';
-        let chartInstance = null;
-        let chartViewMode = 'category'; // 'category' or 'type'
-
-        // Category Configurations with Icons and iOS Colors
-        const CATEGORY_CONFIG = {
-            'Food & Dining': { icon: 'utensils', color: '#ff9f0a', bg: 'rgba(255, 159, 10, 0.15)' },
-            'Utilities': { icon: 'zap', color: '#64d2ff', bg: 'rgba(100, 210, 255, 0.15)' },
-            'Transport': { icon: 'car', color: '#bf5af2', bg: 'rgba(191, 90, 242, 0.15)' },
-            'Business/Work': { icon: 'briefcase', color: '#0a84ff', bg: 'rgba(10, 132, 255, 0.15)' },
-            'Personal': { icon: 'user', color: '#ff375f', bg: 'rgba(255, 55, 95, 0.15)' },
-            'Salary': { icon: 'banknote', color: '#30d158', bg: 'rgba(48, 209, 88, 0.15)' },
-            'Freelance': { icon: 'laptop', color: '#32ade6', bg: 'rgba(50, 173, 230, 0.15)' },
-            'Investments': { icon: 'trending-up', color: '#ffd60a', bg: 'rgba(255, 214, 10, 0.15)' },
-            'Other': { icon: 'more-horizontal', color: '#8e8e93', bg: 'rgba(142, 142, 147, 0.15)' }
-        };
-
-        const EXPENSE_CATEGORIES = ['Food & Dining', 'Utilities', 'Transport', 'Business/Work', 'Personal', 'Other'];
-        const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Investments', 'Business/Work', 'Other'];
-
-        // Sample Data Set tailored in Philippine Peso
-        const SAMPLE_DATA = [
-            { id: '1', type: 'income', amount: 85000.00, category: 'Salary', description: 'Monthly Tech Salary', datetime: new Date(Date.now() - 86400000 * 3).toISOString() },
-            { id: '2', type: 'expense', amount: 3850.50, category: 'Food & Dining', description: 'Supermarket Groceries', datetime: new Date(Date.now() - 86400000 * 2).toISOString() },
-            { id: '3', type: 'expense', amount: 4200.00, category: 'Utilities', description: 'Electricity & Internet Bill', datetime: new Date(Date.now() - 86400000 * 1.5).toISOString() },
-            { id: '4', type: 'income', amount: 15000.00, category: 'Freelance', description: 'Web Development Project', datetime: new Date(Date.now() - 86400000 * 1).toISOString() },
-            { id: '5', type: 'expense', amount: 1500.00, category: 'Transport', description: 'Gasoline Refill', datetime: new Date().toISOString() }
+        // Preset Categories with icons and colors
+        const EXPENSE_CATEGORIES = [
+            { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
+            { name: 'Shopping & Retail', icon: 'shopping-bag', color: '#ff375f' },
+            { name: 'Bills & Utilities', icon: 'zap', color: '#64d2ff' },
+            { name: 'Transportation', icon: 'car', color: '#bf5af2' },
+            { name: 'Entertainment', icon: 'film', color: '#30d158' },
+            { name: 'Healthcare', icon: 'heart-pulse', color: '#ff453a' },
+            { name: 'Other Expense', icon: 'more-horizontal', color: '#8e8e93' }
         ];
 
-        // Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            loadFromStorage();
-            setupEventListeners();
+        const INCOME_CATEGORIES = [
+            { name: 'Salary / Wages', icon: 'briefcase', color: '#30d158' },
+            { name: 'Business / Sales', icon: 'trending-up', color: '#0a84ff' },
+            { name: 'Investments', icon: 'pie-chart', color: '#bf5af2' },
+            { name: 'Gifts & Allowance', icon: 'gift', color: '#ff375f' },
+            { name: 'Other Income', icon: 'plus-circle', color: '#8e8e93' }
+        ];
+
+        // State variables
+        let transactions = JSON.parse(localStorage.getItem('rico_finances_txs')) || [];
+        let currentFilter = 'all';
+        let currentTxType = 'expense';
+        let chartInstance = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
             updateGreeting();
-            initChart();
-            render();
-            // Initialize Lucide icons
+            updateCategoryDropdown();
+            renderApp();
             lucide.createIcons();
+            
+            // Set default date input to today
+            document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
         });
 
-        // Time-based Greeting Helper
+        // Dynamic Time-Based Greeting Function
         function updateGreeting() {
-            const greetingElem = document.getElementById('timeGreeting');
-            if (!greetingElem) return;
-
-            const now = new Date();
-            const hours = now.getHours();
-            let greetingText = "Good evening, Boss Rico J.";
-
-            if (hours >= 5 && hours < 12) {
-                greetingText = "Good morning, Boss Rico J.";
-            } else if (hours >= 12 && hours < 18) {
-                greetingText = "Good afternoon, Boss Rico J.";
-            }
-
-            greetingElem.innerText = greetingText;
-        }
-
-        // Local Storage Helpers
-        function loadFromStorage() {
-            const stored = localStorage.getItem('flow_transactions');
-            if (stored) {
-                try {
-                    transactions = JSON.parse(stored);
-                } catch(e) {
-                    transactions = [...SAMPLE_DATA];
-                }
+            const hour = new Date().getHours();
+            let greeting = 'Good day';
+            if (hour >= 5 && hour < 12) {
+                greeting = 'Good morning';
+            } else if (hour >= 12 && hour < 18) {
+                greeting = 'Good afternoon';
             } else {
-                transactions = [...SAMPLE_DATA];
-                saveToStorage();
+                greeting = 'Good evening';
             }
+            document.getElementById('userGreeting').textContent = `${greeting}, Boss Rico J.`;
         }
 
-        function saveToStorage() {
-            localStorage.setItem('flow_transactions', JSON.stringify(transactions));
+        // Format Currency in PHP
+        function formatPHP(amount) {
+            return new Intl.NumberFormat('en-PH', {
+                style: 'currency',
+                currency: 'PHP',
+                minimumFractionDigits: 2
+            }).format(amount).replace('PHP', '₱');
         }
 
-        // Event Listeners Setup
-        function setupEventListeners() {
-            // Modal Controls
-            document.getElementById('openAddModalBtn').addEventListener('click', () => openTxModal());
-            document.getElementById('closeModalBtn').addEventListener('click', () => closeTxModal());
-            document.getElementById('openSettingsBtn').addEventListener('click', () => openSettingsModal());
-            document.getElementById('closeSettingsBtn').addEventListener('click', () => closeSettingsModal());
-
-            // Type Segment Switcher in Modal
-            document.getElementById('typeExpenseBtn').addEventListener('click', () => setModalType('expense'));
-            document.getElementById('typeIncomeBtn').addEventListener('click', () => setModalType('income'));
-
-            // Quick Amount Buttons
-            document.querySelectorAll('.quick-amt-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const addVal = parseFloat(e.target.dataset.val);
-                    const currentVal = parseFloat(document.getElementById('txAmount').value) || 0;
-                    document.getElementById('txAmount').value = (currentVal + addVal).toFixed(2);
-                });
-            });
-
-            // Form Submit
-            document.getElementById('txForm').addEventListener('submit', handleFormSubmit);
-
-            // Filters & Search
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderTransactions();
-            });
-
-            document.querySelectorAll('.filter-chip').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-chip').forEach(c => {
-                        c.classList.remove('bg-iosBlue', 'text-white');
-                        c.classList.add('bg-iosCardDark', 'text-iosGray');
-                    });
-                    e.target.classList.remove('bg-iosCardDark', 'text-iosGray');
-                    e.target.classList.add('bg-iosBlue', 'text-white');
-                    
-                    selectedTypeFilter = e.target.dataset.filter;
-                    renderTransactions();
-                });
-            });
-
-            document.getElementById('categoryFilterSelect').addEventListener('change', (e) => {
-                selectedCategoryFilter = e.target.value;
-                renderTransactions();
-            });
-
-            // Settings Action Buttons
-            document.getElementById('loadSampleDataBtn').addEventListener('click', () => {
-                transactions = [...SAMPLE_DATA];
-                saveToStorage();
-                closeSettingsModal();
-                render();
-            });
-
-            document.getElementById('exportDataBtn').addEventListener('click', () => {
-                const backupPayload = {
-                    currency: currencyCode,
-                    exportDate: new Date().toISOString(),
-                    transactions: transactions
-                };
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload, null, 2));
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.setAttribute("href", dataStr);
-                downloadAnchor.setAttribute("download", `rico_finances_php_${new Date().toISOString().slice(0,10)}.json`);
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-            });
-
-            document.getElementById('clearAllDataBtn').addEventListener('click', () => {
-                transactions = [];
-                saveToStorage();
-                closeSettingsModal();
-                render();
-            });
-
-            // View Toggle Chart Buttons
-            document.getElementById('viewChartCategoryBtn').addEventListener('click', (e) => {
-                chartViewMode = 'category';
-                e.target.classList.add('bg-iosCardDark', 'text-white');
-                document.getElementById('viewChartRatioBtn').classList.remove('bg-iosCardDark', 'text-white');
-                updateChart();
-            });
-
-            document.getElementById('viewChartRatioBtn').addEventListener('click', (e) => {
-                chartViewMode = 'type';
-                e.target.classList.add('bg-iosCardDark', 'text-white');
-                document.getElementById('viewChartCategoryBtn').classList.remove('bg-iosCardDark', 'text-white');
-                updateChart();
-            });
-        }
-
-        // Modal Controls
-        function openTxModal(editId = null) {
-            const modalOverlay = document.getElementById('txModalOverlay');
-            const modalContent = document.getElementById('txModalContent');
-            
-            if (editId) {
-                const tx = transactions.find(t => t.id === editId);
-                if (tx) {
-                    document.getElementById('editingTxId').value = tx.id;
-                    document.getElementById('modalTitle').innerText = 'Edit Transaction';
-                    setModalType(tx.type);
-                    document.getElementById('txAmount').value = tx.amount;
-                    document.getElementById('txCategory').value = tx.category;
-                    document.getElementById('txDescription').value = tx.description || '';
-                    document.getElementById('txDateTime').value = new Date(tx.datetime).toISOString().slice(0, 16);
-                }
-            } else {
-                document.getElementById('editingTxId').value = '';
-                document.getElementById('modalTitle').innerText = 'New Transaction';
-                setModalType('expense');
-                document.getElementById('txForm').reset();
-                
-                // Format local ISO datetime for default input
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                document.getElementById('txDateTime').value = now.toISOString().slice(0, 16);
-            }
-
-            modalOverlay.classList.remove('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('translate-y-full');
-        }
-
-        function closeTxModal() {
-            const modalOverlay = document.getElementById('txModalOverlay');
-            const modalContent = document.getElementById('txModalContent');
-            modalContent.classList.add('translate-y-full');
-            modalOverlay.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function openSettingsModal() {
-            const overlay = document.getElementById('settingsModalOverlay');
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeSettingsModal() {
-            const overlay = document.getElementById('settingsModalOverlay');
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function setModalType(type) {
-            activeType = type;
-            const expenseBtn = document.getElementById('typeExpenseBtn');
-            const incomeBtn = document.getElementById('typeIncomeBtn');
-
-            if (type === 'expense') {
-                expenseBtn.className = 'py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-iosRed text-white shadow-sm';
-                incomeBtn.className = 'py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-iosGray hover:text-white';
-                populateCategories(EXPENSE_CATEGORIES);
-            } else {
-                incomeBtn.className = 'py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-iosGreen text-white shadow-sm';
-                expenseBtn.className = 'py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-iosGray hover:text-white';
-                populateCategories(INCOME_CATEGORIES);
-            }
-        }
-
-        function populateCategories(categoryList) {
-            const categorySelect = document.getElementById('txCategory');
-            categorySelect.innerHTML = categoryList.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-        }
-
-        // Form Submit Handler
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const editId = document.getElementById('editingTxId').value;
-            const amount = parseFloat(document.getElementById('txAmount').value);
-            const category = document.getElementById('txCategory').value;
-            const description = document.getElementById('txDescription').value.trim();
-            const datetime = new Date(document.getElementById('txDateTime').value).toISOString();
-
-            if (isNaN(amount) || amount <= 0) return;
-
-            if (editId) {
-                // Update Existing
-                transactions = transactions.map(tx => tx.id === editId ? {
-                    id: editId,
-                    type: activeType,
-                    amount,
-                    category,
-                    description,
-                    datetime
-                } : tx);
-            } else {
-                // Create New
-                const newTx = {
-                    id: Date.now().toString(),
-                    type: activeType,
-                    amount,
-                    category,
-                    description,
-                    datetime
-                };
-                transactions.unshift(newTx);
-            }
-
-            saveToStorage();
-            closeTxModal();
-            render();
-        }
-
-        // Main Render Function
-        function render() {
-            updateGreeting();
-            calculateDashboard();
+        // Main Render Cycle
+        function renderApp() {
+            calculateBalances();
             renderTransactions();
-            updateChart();
-            renderTopCategories();
+            renderChartAndBreakdown();
+            localStorage.setItem('rico_finances_txs', JSON.stringify(transactions));
         }
 
-        // Real-Time Hero Calculation
-        function calculateDashboard() {
-            let totalIncome = 0;
-            let totalExpense = 0;
+        // Calculate Totals & Net Cash
+        function calculateBalances() {
+            const totalIncome = transactions
+                .filter(t => t.type === 'income')
+                .reduce((acc, t) => acc + parseFloat(t.amount), 0);
 
-            transactions.forEach(tx => {
-                if (tx.type === 'income') totalIncome += tx.amount;
-                if (tx.type === 'expense') totalExpense += tx.amount;
-            });
+            const totalExpense = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((acc, t) => acc + parseFloat(t.amount), 0);
 
             const netBalance = totalIncome - totalExpense;
 
-            // Formatted values in PHP
-            document.getElementById('heroBalance').innerText = netBalance.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('heroIncome').innerText = `${currencySymbol}${totalIncome.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            document.getElementById('heroExpense').innerText = `${currencySymbol}${totalExpense.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('totalIncomeDisplay').textContent = formatPHP(totalIncome);
+            document.getElementById('totalExpenseDisplay').textContent = formatPHP(totalExpense);
+            document.getElementById('netBalanceDisplay').textContent = formatPHP(netBalance);
 
-            // Health Badge State
-            const healthBadge = document.getElementById('healthBadge');
-            if (netBalance >= 0) {
-                healthBadge.innerText = "Positive Cashflow";
-                healthBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-iosGreen/20 text-iosGreen border border-iosGreen/30";
+            // Status indicator
+            const statusEl = document.getElementById('cashOnHandStatus');
+            if (netBalance < 0) {
+                statusEl.textContent = 'Deficit';
+                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosRed/10 text-iosRed border border-iosRed/20';
+            } else if (netBalance === 0) {
+                statusEl.textContent = 'Neutral';
+                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosOrange/10 text-iosOrange border border-iosOrange/20';
             } else {
-                healthBadge.innerText = "Negative Deficit";
-                healthBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-iosRed/20 text-iosRed border border-iosRed/30";
+                statusEl.textContent = 'Healthy';
+                statusEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20';
             }
 
-            // Ratio Progress Bar
-            const sum = totalIncome + totalExpense;
-            const incomeRatioBar = document.getElementById('incomeRatioBar');
-            const expenseRatioBar = document.getElementById('expenseRatioBar');
-
-            if (sum === 0) {
-                incomeRatioBar.style.width = '50%';
-                expenseRatioBar.style.width = '50%';
+            // Ratio Bar
+            const ratioBar = document.getElementById('expenseRatioBar');
+            const ratioText = document.getElementById('expenseRatioText');
+            if (totalIncome > 0) {
+                const ratio = Math.min(Math.round((totalExpense / totalIncome) * 100), 100);
+                ratioBar.style.width = `${ratio}%`;
+                ratioText.textContent = `${ratio}% of income`;
+                ratioBar.className = ratio > 85 ? 'bg-iosRed h-full transition-all duration-500 rounded-full' : 'bg-iosBlue h-full transition-all duration-500 rounded-full';
             } else {
-                const incomePct = (totalIncome / sum) * 100;
-                const expensePct = (totalExpense / sum) * 100;
-                incomeRatioBar.style.width = `${incomePct}%`;
-                expenseRatioBar.style.width = `${expensePct}%`;
+                ratioBar.style.width = '0%';
+                ratioText.textContent = '0% of income';
             }
         }
 
-        // Render Filtered Transaction List
+        // Render Transaction Feed
         function renderTransactions() {
-            const listContainer = document.getElementById('transactionList');
-            const emptyState = document.getElementById('emptyState');
+            const listEl = document.getElementById('transactionList');
+            const emptyEl = document.getElementById('emptyState');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
-            let filtered = transactions.filter(tx => {
-                // Type Filter
-                if (selectedTypeFilter !== 'all' && tx.type !== selectedTypeFilter) return false;
-                // Category Filter
-                if (selectedCategoryFilter !== 'all' && tx.category !== selectedCategoryFilter) return false;
-                // Search Query
-                if (searchQuery) {
-                    const matchDesc = (tx.description || '').toLowerCase().includes(searchQuery);
-                    const matchCat = tx.category.toLowerCase().includes(searchQuery);
-                    const matchAmt = tx.amount.toString().includes(searchQuery);
-                    return matchDesc || matchCat || matchAmt;
-                }
+            let filtered = transactions.filter(t => {
+                if (currentFilter === 'income') return t.type === 'income';
+                if (currentFilter === 'expense') return t.type === 'expense';
                 return true;
             });
 
-            // Sort by Date Descending
-            filtered.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+            if (searchTerm) {
+                filtered = filtered.filter(t => 
+                    t.desc.toLowerCase().includes(searchTerm) || 
+                    t.category.toLowerCase().includes(searchTerm)
+                );
+            }
 
-            document.getElementById('txCountBadge').innerText = filtered.length;
+            // Sort newest first
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
+
+            document.getElementById('txCount').textContent = `${filtered.length} items`;
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                listEl.innerHTML = '';
+                emptyEl.classList.remove('hidden');
                 return;
             }
 
-            emptyState.classList.add('hidden');
+            emptyEl.classList.add('hidden');
 
-            listContainer.innerHTML = filtered.map(tx => {
-                const config = CATEGORY_CONFIG[tx.category] || CATEGORY_CONFIG['Other'];
-                const isIncome = tx.type === 'income';
-                const amtPrefix = isIncome ? '+' : '-';
-                const amtClass = isIncome ? 'text-iosGreen' : 'text-white';
-                const formattedDate = new Date(tx.datetime).toLocaleDateString('en-PH', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+            listEl.innerHTML = filtered.map(t => {
+                const isExpense = t.type === 'expense';
+                const catObj = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].find(c => c.name === t.category) || { icon: 'tag', color: '#8e8e93' };
 
                 return `
-                    <div class="group bg-iosCardDark p-3.5 rounded-2xl border border-neutral-800/80 flex items-center justify-between transition-all hover:bg-neutral-800/50">
+                    <div class="bg-iosCardDark border border-iosBorderDark/80 rounded-2xl p-3.5 flex items-center justify-between gap-3 hover:border-iosGray/30 transition">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" style="background-color: ${config.bg}; color: ${config.color}">
-                                <i data-lucide="${config.icon}" class="w-5 h-5"></i>
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0" style="background-color: ${catObj.color}20; color: ${catObj.color}">
+                                <i data-lucide="${catObj.icon}" class="w-5 h-5"></i>
                             </div>
                             <div class="min-w-0">
-                                <div class="flex items-center gap-1.5">
-                                    <p class="text-sm font-semibold text-white truncate">${tx.description || tx.category}</p>
-                                </div>
-                                <div class="flex items-center gap-2 text-[11px] text-iosGray">
-                                    <span>${tx.category}</span>
-                                    <span>•</span>
-                                    <span>${formattedDate}</span>
+                                <p class="text-xs font-bold text-white truncate">${escapeHtml(t.desc)}</p>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[10px] text-iosGray">${t.date}</span>
+                                    <span class="text-[10px] px-1.5 py-0.2 rounded bg-black/40 text-iosGray2 border border-iosBorderDark/50">${t.category}</span>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                            <div class="text-right">
-                                <span class="text-sm font-bold ${amtClass}">
-                                    ${amtPrefix}${currencySymbol}${tx.amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </span>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100">
-                                <button onclick="openTxModal('${tx.id}')" class="p-1.5 rounded-lg hover:bg-neutral-700 text-iosGray hover:text-white transition-all active-tap" title="Edit">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                </button>
-                                <button onclick="deleteTransaction('${tx.id}')" class="p-1.5 rounded-lg hover:bg-iosRed/20 text-iosGray hover:text-iosRed transition-all active-tap" title="Delete">
-                                    <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <span class="text-sm font-extrabold ${isExpense ? 'text-iosRed' : 'text-iosGreen'}">
+                                ${isExpense ? '-' : '+'}${formatPHP(t.amount)}
+                            </span>
+                            <button onclick="deleteTransaction(${t.id})" class="text-iosGray hover:text-iosRed p-1 transition" title="Delete">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // Re-initialize Lucide icons for dynamically added HTML
             lucide.createIcons();
         }
 
-        // Delete Item
-        function deleteTransaction(id) {
-            transactions = transactions.filter(t => t.id !== id);
-            saveToStorage();
-            render();
-        }
-
-        // Top Category Visual Bar List
-        function renderTopCategories() {
-            const container = document.getElementById('topCategoryList');
+        // Render Donut Chart & Legend
+        function renderChartAndBreakdown() {
             const expenses = transactions.filter(t => t.type === 'expense');
-            const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
+            const catMap = {};
+            let totalExp = 0;
 
-            if (totalExpense === 0) {
-                container.innerHTML = `<p class="text-xs text-iosGray text-center py-1">No expense data to analyze</p>`;
+            expenses.forEach(t => {
+                const amt = parseFloat(t.amount);
+                catMap[t.category] = (catMap[t.category] || 0) + amt;
+                totalExp += amt;
+            });
+
+            const categories = Object.keys(catMap);
+            document.getElementById('categoryCountBadge').textContent = `${categories.length} Categories`;
+
+            const legendEl = document.getElementById('categoryLegend');
+            const containerEl = document.getElementById('analyticsContainer');
+            const emptyAnalytics = document.getElementById('emptyAnalytics');
+
+            if (categories.length === 0 || totalExp === 0) {
+                containerEl.classList.add('hidden');
+                emptyAnalytics.classList.remove('hidden');
                 return;
             }
 
-            // Group by category
-            const categorySums = {};
-            expenses.forEach(t => {
-                categorySums[t.category] = (categorySums[t.category] || 0) + t.amount;
-            });
+            containerEl.classList.remove('hidden');
+            emptyAnalytics.classList.add('hidden');
 
-            // Convert to array and sort top 3
-            const sorted = Object.keys(categorySums)
-                .map(cat => ({ category: cat, amount: categorySums[cat] }))
-                .sort((a, b) => b.amount - a.amount)
-                .slice(0, 3);
+            const chartData = [];
+            const chartColors = [];
 
-            container.innerHTML = sorted.map(item => {
-                const config = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG['Other'];
-                const pct = ((item.amount / totalExpense) * 100).toFixed(0);
+            legendEl.innerHTML = categories.map(cat => {
+                const amt = catMap[cat];
+                const pct = Math.round((amt / totalExp) * 100);
+                const catObj = EXPENSE_CATEGORIES.find(c => c.name === cat) || { color: '#8e8e93' };
+
+                chartData.push(amt);
+                chartColors.push(catObj.color);
 
                 return `
                     <div class="space-y-1">
-                        <div class="flex justify-between text-xs font-medium">
-                            <span class="text-iosGray2 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full" style="background-color: ${config.color}"></span>
-                                ${item.category}
+                        <div class="flex justify-between items-center text-[11px]">
+                            <span class="text-iosGray2 flex items-center gap-1.5 truncate">
+                                <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: ${catObj.color}"></span>
+                                ${cat}
                             </span>
-                            <span class="text-white">${currencySymbol}${item.amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${pct}%)</span>
+                            <span class="font-semibold text-white">${pct}% (${formatPHP(amt)})</span>
                         </div>
-                        <div class="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${config.color}"></div>
+                        <div class="w-full bg-black/40 h-1 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: ${pct}%; background-color: ${catObj.color}"></div>
                         </div>
                     </div>
                 `;
             }).join('');
-        }
 
-        // Chart.js Donut Visualization
-        function initChart() {
-            const ctx = document.getElementById('spendingChart').getContext('2d');
+            // Chart.js initialization
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
             chartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: [],
+                    labels: categories,
                     datasets: [{
-                        data: [],
-                        backgroundColor: [],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        data: chartData,
+                        backgroundColor: chartColors,
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '72%',
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${context.label}: ₱${context.raw.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                                    return ` ${context.label}: ${formatPHP(context.raw)}`;
                                 }
                             }
                         }
-                    }
+                    },
+                    cutout: '70%'
                 }
             });
         }
 
-        function updateChart() {
-            if (!chartInstance) return;
+        // Modal Control Functions
+        function openModal() {
+            const modal = document.getElementById('transactionModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('translate-y-full');
+            }, 10);
+        }
 
-            const emptyState = document.getElementById('chartEmptyState');
-            const canvas = document.getElementById('spendingChart');
+        function closeModal() {
+            const modal = document.getElementById('transactionModal');
+            modal.children[0].classList.add('translate-y-full');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('txForm').reset();
+                document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+            }, 300);
+        }
 
-            if (chartViewMode === 'category') {
-                const expenses = transactions.filter(t => t.type === 'expense');
-                if (expenses.length === 0) {
-                    canvas.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                    return;
-                }
-                canvas.classList.remove('hidden');
-                emptyState.classList.add('hidden');
+        function setTxType(type) {
+            currentTxType = type;
+            const expBtn = document.getElementById('typeExpenseBtn');
+            const incBtn = document.getElementById('typeIncomeBtn');
 
-                const categorySums = {};
-                expenses.forEach(t => {
-                    categorySums[t.category] = (categorySums[t.category] || 0) + t.amount;
-                });
-
-                const labels = Object.keys(categorySums);
-                const data = labels.map(cat => categorySums[cat]);
-                const colors = labels.map(cat => (CATEGORY_CONFIG[cat] ? CATEGORY_CONFIG[cat].color : '#8e8e93'));
-
-                chartInstance.data.labels = labels;
-                chartInstance.data.datasets[0].data = data;
-                chartInstance.data.datasets[0].backgroundColor = colors;
+            if (type === 'expense') {
+                expBtn.className = 'py-2 rounded-xl text-xs font-semibold transition bg-iosRed text-white shadow';
+                incBtn.className = 'py-2 rounded-xl text-xs font-semibold transition text-iosGray hover:text-white';
             } else {
-                // Income vs Expense Ratio Chart
-                const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-                const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-
-                if (totalIncome === 0 && totalExpense === 0) {
-                    canvas.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                    return;
-                }
-                canvas.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-
-                chartInstance.data.labels = ['Income', 'Expenses'];
-                chartInstance.data.datasets[0].data = [totalIncome, totalExpense];
-                chartInstance.data.datasets[0].backgroundColor = ['#30d158', '#ff453a'];
+                incBtn.className = 'py-2 rounded-xl text-xs font-semibold transition bg-iosGreen text-white shadow';
+                expBtn.className = 'py-2 rounded-xl text-xs font-semibold transition text-iosGray hover:text-white';
             }
+            updateCategoryDropdown();
+        }
 
-            chartInstance.update();
+        function updateCategoryDropdown() {
+            const catSelect = document.getElementById('txCategory');
+            const list = currentTxType === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+            catSelect.innerHTML = list.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        function addAmountPreset(val) {
+            const amountInput = document.getElementById('txAmount');
+            const currentVal = parseFloat(amountInput.value) || 0;
+            amountInput.value = (currentVal + val).toFixed(2);
+        }
+
+        function saveTransaction(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const category = document.getElementById('txCategory').value;
+            const desc = document.getElementById('txDesc').value.trim();
+            const date = document.getElementById('txDate').value;
+
+            if (!amount || amount <= 0 || !desc) return;
+
+            const newTx = {
+                id: Date.now(),
+                type: currentTxType,
+                amount: amount,
+                category: category,
+                desc: desc,
+                date: date
+            };
+
+            transactions.unshift(newTx);
+            renderApp();
+            closeModal();
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('Delete this transaction?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                renderApp();
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['All', 'Income', 'Expense'].forEach(f => {
+                const btn = document.getElementById(`filterBtn${f}`);
+                if (filter.toLowerCase() === f.toLowerCase()) {
+                    btn.className = 'flex-1 py-1.5 rounded-xl transition text-center bg-iosBlue text-white shadow-sm';
+                } else {
+                    btn.className = 'flex-1 py-1.5 rounded-xl transition text-center text-iosGray hover:text-white';
+                }
+            });
+            renderTransactions();
+        }
+
+        // JSON Backup and Export
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `rico_finances_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        transactions = imported;
+                        renderApp();
+                        alert('Data imported successfully!');
+                    }
+                } catch (err) {
+                    alert('Invalid JSON file format.');
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
+        }
+
+        // Demo Data Generator
+        function loadSampleData() {
+            if (confirm('Load sample Philippine Peso transactions? This will overwrite current entries.')) {
+                const today = new Date().toISOString().split('T')[0];
+                transactions = [
+                    { id: 101, type: 'income', amount: 85000, category: 'Salary / Wages', desc: 'Monthly Salary', date: today },
+                    { id: 102, type: 'expense', amount: 3850.50, category: 'Food & Dining', desc: 'Supermarket Groceries', date: today },
+                    { id: 103, type: 'expense', amount: 4200.00, category: 'Bills & Utilities', desc: 'Electric & Internet Bills', date: today },
+                    { id: 104, type: 'expense', amount: 2500.00, category: 'Transportation', desc: 'Gasoline refill', date: today },
+                    { id: 105, type: 'income', amount: 12000, category: 'Business / Sales', desc: 'Project Consultancy', date: today }
+                ];
+                renderApp();
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
         }
     </script>
 </body>
