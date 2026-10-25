@@ -122,16 +122,16 @@
         <section class="bg-gradient-to-br from-iosCardDark via-iosCardDark to-iosGray6 rounded-3xl p-5 border border-iosBorderDark shadow-ios-float relative overflow-hidden">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-start mb-2">
                 <span class="text-xs font-medium uppercase tracking-wider text-iosGray">Cash on Hand / Balance</span>
                 
-                <div class="flex items-center gap-2.5">
-                    <!-- Naked Glowing Neon Blue Animated Stickman (No box, no text) -->
-                    <canvas id="stickmanCanvas" width="40" height="45" class="cursor-pointer filter drop-shadow-[0_0_8px_#0a84ff]" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
-                    
+                <!-- Right Side Stack: Healthy Badge on Top, Stickman Right Below with Generous Spacing -->
+                <div class="flex flex-col items-end gap-1.5">
                     <span id="cashOnHandStatus" class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
                         Healthy
                     </span>
+                    <!-- Naked Glowing Neon Blue Animated Stickman with Expanded Canvas Height -->
+                    <canvas id="stickmanCanvas" width="45" height="65" class="cursor-pointer filter drop-shadow-[0_0_8px_#0a84ff] mt-0.5" onclick="switchStickmanAction()" title="Tap to switch action"></canvas>
                 </div>
             </div>
             
@@ -272,9 +272,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.3.2</span>
+            <span class="text-iosGray2 font-medium">v1.3.3</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Minimalist Neon Stickman Edition</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Expanded Canvas Stickman Edition</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -351,7 +351,7 @@
 
     <!-- Application JavaScript -->
     <script>
-        const APP_VERSION = 'v1.3.2';
+        const APP_VERSION = 'v1.3.3';
 
         const EXPENSE_CATEGORIES = [
             { name: 'Food & Dining', icon: 'utensils', color: '#ff9f0a' },
@@ -466,7 +466,6 @@
             { render: drawKick }, { render: drawFlex }, { render: drawJuggling }, { render: drawShadowbox },
             { render: drawSkip }, { render: drawSpin }, { render: drawBow }, { render: drawTpose },
             { render: drawLean }, { render: drawSprinting }, { render: drawMeditate }, { render: drawBreakdance2 },
-            // Expanded procedural variations to total 100 action variants seamlessly
             ...Array.from({ length: 80 }, (_, i) => ({
                 render: function(ctx, f, w, h) {
                     const baseAction = STICKMAN_ACTIONS[i % 20].render;
@@ -495,7 +494,11 @@
                 ctx.lineCap = 'round';
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
+                // Offset vertical coordinate downwards to give ample headroom
+                ctx.save();
+                ctx.translate(0, 6);
                 action.render(ctx, frame, canvas.width, canvas.height);
+                ctx.restore();
 
                 frame++;
                 
@@ -648,7 +651,6 @@
             drawLine(ctx, cx, cy - 4, cx + 12, cy - 14);
             drawLine(ctx, cx, cy + 8, cx - 6, cy + 22);
             drawLine(ctx, cx, cy + 8, cx + 6, cy + 22);
-            // Draw floating balls
             ctx.beginPath();
             ctx.arc(cx + Math.sin(f * 0.2) * 10, cy - 22 + Math.cos(f * 0.2) * 4, 2, 0, Math.PI * 2);
             ctx.arc(cx + Math.cos(f * 0.2) * 10, cy - 22 - Math.sin(f * 0.2) * 4, 2, 0, Math.PI * 2);
