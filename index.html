@@ -82,7 +82,7 @@
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pb-safe">
 
-    <!-- Sticky Locked Header Section (Properly padded below iPhone status bar) -->
+    <!-- Sticky Locked Header Section (Safe for Notch / Status Bar) -->
     <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-iosBorderDark px-4 pt-safe pb-3 transition-all duration-300">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -121,42 +121,30 @@
             </button>
         </section>
 
-        <!-- Balance Summary Display Card (Supports Touch Swiping) -->
+        <!-- Balance Summary Display Card -->
         <section id="balanceSummaryCard" class="bg-gradient-to-br from-iosCardDark via-iosCardDark to-iosGray6 rounded-3xl p-5 border border-iosBorderDark shadow-ios-float relative overflow-hidden select-none">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-xs font-medium uppercase tracking-wider text-iosGray">Cash on Hand / Balance (Fixed)</span>
-                <span id="cashOnHandStatus" class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
-                    Healthy
-                </span>
+            <div class="flex justify-between items-start mb-1">
+                <span class="text-xs font-medium uppercase tracking-wider text-iosGray">Cash on Hand / Balance</span>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Pure Floating Stickman (No Box/Text) -->
+                    <canvas id="stickmanCanvas" width="40" height="30" onclick="switchStickmanAction()" class="block cursor-pointer"></canvas>
+                    
+                    <span id="cashOnHandStatus" class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-iosGreen/10 text-iosGreen border border-iosGreen/20">
+                        Healthy
+                    </span>
+                </div>
             </div>
             
             <div class="mb-4">
                 <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-1">
                     <span id="netBalanceDisplay">₱0.00</span>
                 </div>
-                <p class="text-xs text-iosGray mt-1 flex items-center gap-1">
-                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
-                    Lifetime Balance (Carried Over)
-                </p>
             </div>
 
-            <!-- Borderless Neon Stickman Entertainment Zone & Health Section -->
-            <div class="flex items-center justify-between pt-2 pb-2 border-t border-iosBorderDark/60 mb-2">
-                <div class="flex items-center gap-2 text-xs text-iosGray">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-iosCyan"></i>
-                    <span>Entertainment Zone</span>
-                </div>
-                
-                <!-- Seamless Borderless Stickman -->
-                <div onclick="switchStickmanAction()" class="cursor-pointer flex items-center gap-2 bg-black/20 px-2 py-1 rounded-full border border-iosBlue/20 hover:border-iosBlue/50 transition">
-                    <canvas id="stickmanCanvas" width="60" height="40" class="block"></canvas>
-                    <span id="stickmanActionLabel" class="text-[10px] text-iosCyan font-mono tracking-tight">Waving 👋</span>
-                </div>
-            </div>
-
-            <!-- Income vs Expense Cards Split (Filtered by Selected Month) -->
+            <!-- Income vs Expense Cards Split -->
             <div class="grid grid-cols-2 gap-3 pt-3 border-t border-iosBorderDark/60">
                 <div class="bg-black/30 rounded-2xl p-3 border border-iosBorderDark/40">
                     <div class="flex items-center gap-1.5 text-iosGreen text-xs font-medium mb-1">
@@ -279,9 +267,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.4.1</span>
+            <span class="text-iosGray2 font-medium">v1.4.2</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Seamless Stickman & Safe Header</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; Ultra-Clean iOS Layout</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -360,7 +348,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.4.1';
+                const CACHE_NAME = 'rico-finances-v1.4.2';
                 const ASSETS = [
                     './',
                     './index.html',
@@ -521,8 +509,8 @@
                 ctx.strokeStyle = '#64d2ff';
                 ctx.fillStyle = '#64d2ff';
                 ctx.shadowColor = '#0a84ff';
-                ctx.shadowBlur = 10;
-                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 8;
+                ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
@@ -532,7 +520,6 @@
                 
                 if (frame % 300 === 0) {
                     currentActionIndex = (currentActionIndex + 1) % STICKMAN_ACTIONS.length;
-                    document.getElementById('stickmanActionLabel').textContent = STICKMAN_ACTIONS[currentActionIndex].name;
                 }
 
                 animationFrameId = requestAnimationFrame(animate);
@@ -544,10 +531,9 @@
 
         function switchStickmanAction() {
             currentActionIndex = (currentActionIndex + 1) % STICKMAN_ACTIONS.length;
-            document.getElementById('stickmanActionLabel').textContent = STICKMAN_ACTIONS[currentActionIndex].name;
         }
 
-        function drawHead(ctx, x, y, r = 5) {
+        function drawHead(ctx, x, y, r = 4) {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
             ctx.stroke();
@@ -561,45 +547,45 @@
         }
 
         function drawWave(ctx, f, w, h) {
-            const wave = Math.sin(f * 0.15) * 8;
+            const wave = Math.sin(f * 0.15) * 6;
             const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 10, cy + 3);
-            drawLine(ctx, cx, cy - 3, cx + 10, cy - 12 + wave);
-            drawLine(ctx, cx, cy + 8, cx - 8, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 8, cy + 20);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 7, cy + 2);
+            drawLine(ctx, cx, cy - 2, cx + 7, cy - 8 + wave);
+            drawLine(ctx, cx, cy + 6, cx - 5, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 5, cy + 13);
         }
 
         function drawPushups(ctx, f, w, h) {
-            const push = Math.sin(f * 0.1) * 5;
-            const cx = w / 2, cy = h / 2 + 5 + push;
-            drawHead(ctx, cx - 16, cy - 2);
-            drawLine(ctx, cx - 10, cy, cx + 10, cy);
-            drawLine(ctx, cx - 3, cy, cx - 3, cy + 8 - push);
-            drawLine(ctx, cx + 10, cy, cx + 18, cy + 8);
+            const push = Math.sin(f * 0.1) * 3;
+            const cx = w / 2, cy = h / 2 + 3 + push;
+            drawHead(ctx, cx - 12, cy - 2);
+            drawLine(ctx, cx - 8, cy, cx + 8, cy);
+            drawLine(ctx, cx - 2, cy, cx - 2, cy + 6 - push);
+            drawLine(ctx, cx + 8, cy, cx + 13, cy + 6);
         }
 
         function drawJacks(ctx, f, w, h) {
-            const spread = Math.sin(f * 0.2) * 10;
+            const spread = Math.sin(f * 0.2) * 6;
             const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 12, cy - 6 + spread);
-            drawLine(ctx, cx, cy - 3, cx + 12, cy - 6 + spread);
-            drawLine(ctx, cx, cy + 8, cx - 4 - spread, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 4 + spread, cy + 20);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 8, cy - 4 + spread);
+            drawLine(ctx, cx, cy - 2, cx + 8, cy - 4 + spread);
+            drawLine(ctx, cx, cy + 6, cx - 3 - spread, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 3 + spread, cy + 13);
         }
 
         function drawDance(ctx, f, w, h) {
-            const bounce = Math.abs(Math.sin(f * 0.15)) * 6;
+            const bounce = Math.abs(Math.sin(f * 0.15)) * 4;
             const cx = w / 2, cy = h / 2 - bounce;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 6);
-            drawLine(ctx, cx, cy - 3, cx - 12, cy - 10 + bounce);
-            drawLine(ctx, cx, cy - 3, cx + 12, cy + 3 - bounce);
-            drawLine(ctx, cx, cy + 6, cx - 8, cy + 18);
-            drawLine(ctx, cx, cy + 6, cx + 10, cy + 15);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 4);
+            drawLine(ctx, cx, cy - 2, cx - 8, cy - 6 + bounce);
+            drawLine(ctx, cx, cy - 2, cx + 8, cy + 2 - bounce);
+            drawLine(ctx, cx, cy + 4, cx - 5, cy + 12);
+            drawLine(ctx, cx, cy + 4, cx + 7, cy + 10);
         }
 
         function drawFlip(ctx, f, w, h) {
@@ -608,69 +594,69 @@
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(rot);
-            drawHead(ctx, 0, -10);
-            drawLine(ctx, 0, -6, 0, 6);
-            drawLine(ctx, 0, -3, -8, 0);
-            drawLine(ctx, 0, -3, 8, 0);
-            drawLine(ctx, 0, 6, -6, 16);
-            drawLine(ctx, 0, 6, 6, 16);
+            drawHead(ctx, 0, -8);
+            drawLine(ctx, 0, -4, 0, 4);
+            drawLine(ctx, 0, -2, -6, 0);
+            drawLine(ctx, 0, -2, 6, 0);
+            drawLine(ctx, 0, 4, -4, 10);
+            drawLine(ctx, 0, 4, 4, 10);
             ctx.restore();
         }
 
         function drawMoonwalk(ctx, f, w, h) {
-            const slide = (f * 0.8) % 20 - 10;
-            const legSwing = Math.sin(f * 0.2) * 6;
+            const slide = (f * 0.8) % 14 - 7;
+            const legSwing = Math.sin(f * 0.2) * 4;
             const cx = w / 2 - slide, cy = h / 2;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 8, cy + 3);
-            drawLine(ctx, cx, cy - 3, cx + 8, cy + 3);
-            drawLine(ctx, cx, cy + 8, cx - 6 + legSwing, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 8 - legSwing, cy + 20);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 5, cy + 2);
+            drawLine(ctx, cx, cy - 2, cx + 5, cy + 2);
+            drawLine(ctx, cx, cy + 6, cx - 4 + legSwing, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 5 - legSwing, cy + 13);
         }
 
         function drawHover(ctx, f, w, h) {
-            const hover = Math.sin(f * 0.08) * 5;
-            const cx = w / 2, cy = h / 2 - 5 + hover;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 12, cy - 8);
-            drawLine(ctx, cx, cy - 3, cx + 12, cy - 8);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 18);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 18);
+            const hover = Math.sin(f * 0.08) * 3;
+            const cx = w / 2, cy = h / 2 - 3 + hover;
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 8, cy - 5);
+            drawLine(ctx, cx, cy - 2, cx + 8, cy - 5);
+            drawLine(ctx, cx, cy + 6, cx - 4, cy + 12);
+            drawLine(ctx, cx, cy + 6, cx + 4, cy + 12);
         }
 
         function drawStretch(ctx, f, w, h) {
-            const stretch = Math.sin(f * 0.1) * 4;
+            const stretch = Math.sin(f * 0.1) * 3;
             const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx, cy - 12 - stretch);
-            drawLine(ctx, cx, cy - 7 - stretch, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3 - stretch, cx - 10, cy - 16 - stretch);
-            drawLine(ctx, cx, cy - 3 - stretch, cx + 10, cy - 16 - stretch);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 20);
+            drawHead(ctx, cx, cy - 8 - stretch);
+            drawLine(ctx, cx, cy - 4 - stretch, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2 - stretch, cx - 6, cy - 10 - stretch);
+            drawLine(ctx, cx, cy - 2 - stretch, cx + 6, cy - 10 - stretch);
+            drawLine(ctx, cx, cy + 6, cx - 4, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 4, cy + 13);
         }
 
         function drawKick(ctx, f, w, h) {
-            const kick = Math.abs(Math.sin(f * 0.12)) * 16;
+            const kick = Math.abs(Math.sin(f * 0.12)) * 10;
             const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 8, cy + 3);
-            drawLine(ctx, cx, cy - 3, cx + 8, cy - 3);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 14, cy + 8 - kick);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 5, cy + 2);
+            drawLine(ctx, cx, cy - 2, cx + 5, cy - 2);
+            drawLine(ctx, cx, cy + 6, cx - 4, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 9, cy + 5 - kick);
         }
 
         function drawFlex(ctx, f, w, h) {
-            const pulse = Math.sin(f * 0.15) * 2;
+            const pulse = Math.sin(f * 0.15) * 1.5;
             const cx = w / 2, cy = h / 2;
-            drawHead(ctx, cx, cy - 12);
-            drawLine(ctx, cx, cy - 7, cx, cy + 8);
-            drawLine(ctx, cx, cy - 3, cx - 10 - pulse, cy - 12);
-            drawLine(ctx, cx, cy - 3, cx + 10 + pulse, cy - 12);
-            drawLine(ctx, cx, cy + 8, cx - 6, cy + 20);
-            drawLine(ctx, cx, cy + 8, cx + 6, cy + 20);
+            drawHead(ctx, cx, cy - 8);
+            drawLine(ctx, cx, cy - 4, cx, cy + 6);
+            drawLine(ctx, cx, cy - 2, cx - 6 - pulse, cy - 8);
+            drawLine(ctx, cx, cy - 2, cx + 6 + pulse, cy - 8);
+            drawLine(ctx, cx, cy + 6, cx - 4, cy + 13);
+            drawLine(ctx, cx, cy + 6, cx + 4, cy + 13);
         }
 
         function initNetworkStatus() {
