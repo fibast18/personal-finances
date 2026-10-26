@@ -243,7 +243,7 @@
             </div>
         </section>
 
-        <!-- Management & Backup Actions -->
+        <!-- Management & Backup Actions (Restored Import/Export) -->
         <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
             <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings</h3>
             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -253,7 +253,7 @@
                 </button>
                 <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition">
                     <i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>
-                    Import JSON
+                    Import / Update JSON
                 </button>
                 <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
             </div>
@@ -266,9 +266,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.5.0</span>
+            <span class="text-iosGray2 font-medium">v1.5.1</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 100+ Sports & Full-Width Animation Arena</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 100+ Sports Stickman Arena</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -347,7 +347,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.5.0';
+                const CACHE_NAME = 'rico-finances-v1.5.1';
                 const ASSETS = [
                     './',
                     './index.html',
@@ -483,10 +483,8 @@
         let currentActionIndex = 0;
         let animationFrameId = null;
 
-        // 100+ Procedural Action Generators with Sports Balls, Saucers, Water, and Ground
         const STICKMAN_ACTIONS = [];
         
-        // Helper generators
         function makeRunner(name, speed, bounceHeight) {
             return (ctx, f, w, h) => {
                 const xPos = (f * speed) % (w + 40) - 20;
@@ -511,7 +509,6 @@
                 drawLine(ctx, cx, cy + 6, cx - 6, cy + 18);
                 drawLine(ctx, cx, cy + 6, cx + 6, cy + 18);
 
-                // Draw Ball / Shuttlecock / Saucer
                 ctx.beginPath();
                 const bx = cx + 22 + Math.sin(f * 0.2) * 15;
                 const by = cy + 10 + Math.cos(f * 0.2) * 6;
@@ -522,8 +519,7 @@
             };
         }
 
-        // Generate 100+ Actions programmatically & uniquely
-        const sportKeywords = ['Basketball', 'Soccer', 'Tennis', 'Badminton', 'Volleyball', 'Golf', 'Bowling', 'Billiards', 'Rugby', 'Baseball', 'Cricket', 'PingPong', 'Frisbee', 'Hockey', 'Rugby', 'Saucer', 'Swimming', 'Diving', 'Surfing', 'Sprinting', 'Parkour', 'Skating', 'Cycling', 'Rowing', 'Boxer', 'Karate', 'Fencing', 'Gymnast', 'Archery', 'Weightlift'];
+        const sportKeywords = ['Basketball', 'Soccer', 'Tennis', 'Badminton', 'Volleyball', 'Golf', 'Bowling', 'Billiards', 'Rugby', 'Baseball', 'Cricket', 'PingPong', 'Frisbee', 'Hockey', 'Saucer', 'Swimming', 'Diving', 'Surfing', 'Sprinting', 'Parkour', 'Skating', 'Cycling', 'Rowing', 'Boxer', 'Karate', 'Fencing', 'Gymnast', 'Archery', 'Weightlift'];
         
         for (let i = 1; i <= 105; i++) {
             if (i % 5 === 0) {
@@ -577,21 +573,19 @@
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
 
-                // Draw Ground line / Arena floor
                 ctx.beginPath();
                 ctx.moveTo(10, canvas.height - 4);
                 ctx.lineTo(canvas.width - 10, canvas.height - 4);
                 ctx.strokeStyle = 'rgba(100, 210, 255, 0.3)';
                 ctx.stroke();
 
-                ctx.strokeStyle = '#64d2ff'; // reset stickman color
+                ctx.strokeStyle = '#64d2ff';
 
                 const action = STICKMAN_ACTIONS[currentActionIndex];
                 action(ctx, frame, canvas.width, canvas.height);
 
                 frame++;
                 
-                // Automatically switch to a new sport/action every 250 frames (~4 seconds)
                 if (frame % 250 === 0) {
                     currentActionIndex = (currentActionIndex + 1) % STICKMAN_ACTIONS.length;
                 }
@@ -1075,7 +1069,7 @@
                         transactions = imported;
                         renderApp();
                         handleNetworkChange();
-                        alert('Data imported successfully!');
+                        alert('Data updated & imported successfully!');
                     }
                 } catch (err) {
                     alert('Invalid JSON file format.');
