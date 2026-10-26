@@ -20,7 +20,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   boxShadow: { 'glow-blue':'0 0 20px rgba(10,132,255,0.25)', 'ios-float':'0 10px 30px rgba(0,0,0,0.35)' }
 }}}
 </script>
-<!-- Pinned versions (v1.6.1) -->
+<!-- Pinned versions (v1.6.2) -->
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <style>
@@ -56,12 +56,13 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 
 <main class="max-w-md mx-auto w-full px-4 py-4 space-y-5 flex-1">
 
-  <!-- Backup reminder (shown when no backup in 7+ days) -->
+  <!-- Backup reminder banner -->
   <section id="backupBanner" class="hidden bg-iosOrange/10 border border-iosOrange/30 rounded-2xl p-3 text-xs text-iosOrange flex items-center justify-between gap-2">
     <span id="backupBannerText">Back up your data.</span>
     <button onclick="exportData()" class="px-3 py-1.5 rounded-xl bg-iosOrange text-black font-semibold flex-shrink-0">Export now</button>
   </section>
 
+  <!-- Month Navigation Ribbon -->
   <section class="flex items-center justify-between bg-iosCardDark rounded-2xl p-2 border border-iosBorderDark select-none">
     <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-xl bg-black/40 hover:bg-black/70 flex items-center justify-center text-iosGray hover:text-white transition"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
     <div class="text-center">
@@ -71,6 +72,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     <button onclick="changeMonth(1)" class="w-8 h-8 rounded-xl bg-black/40 hover:bg-black/70 flex items-center justify-center text-iosGray hover:text-white transition"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
   </section>
 
+  <!-- Balance Summary Card with Borderless Stickman -->
   <section id="balanceSummaryCard" class="bg-gradient-to-br from-iosCardDark via-iosCardDark to-iosGray6 rounded-3xl p-5 border border-iosBorderDark shadow-ios-float relative overflow-hidden select-none">
     <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-iosBlue/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="flex justify-between items-start mb-1">
@@ -79,6 +81,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     </div>
     <div class="mb-3"><div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-baseline gap-1"><span id="netBalanceDisplay">₱0.00</span></div></div>
 
+    <!-- Borderless, Blended Horizontal Entertainment Arena (200+ Actions) -->
     <div onclick="switchStickmanAction()" class="relative w-full h-12 bg-transparent cursor-pointer overflow-hidden flex items-center px-1 mb-3">
       <canvas id="stickmanCanvas" width="310" height="42" class="block w-full h-full"></canvas>
     </div>
@@ -104,6 +107,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     </div>
   </section>
 
+  <!-- Quick Filter Ribbon -->
   <section class="flex items-center justify-between gap-2">
     <div class="flex bg-iosCardDark p-1 rounded-2xl border border-iosBorderDark w-full text-xs font-medium">
       <button onclick="setFilter('all')" id="filterBtnAll" class="flex-1 py-1.5 rounded-xl transition text-center bg-iosBlue text-white shadow-sm">All</button>
@@ -112,6 +116,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     </div>
   </section>
 
+  <!-- Expense Breakdown Donut Chart -->
   <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark">
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-sm font-semibold text-white flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4 text-iosPurple"></i>Expense Breakdown</h2>
@@ -124,6 +129,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     <div id="emptyAnalytics" class="hidden text-center py-6 text-iosGray text-xs">No expense data logged for this month.</div>
   </section>
 
+  <!-- Transactions Feed -->
   <section class="space-y-3">
     <div class="flex items-center justify-between px-1">
       <h2 class="text-sm font-semibold text-white flex items-center gap-2"><i data-lucide="list" class="w-4 h-4 text-iosBlue"></i>Transactions</h2>
@@ -141,6 +147,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     </div>
   </section>
 
+  <!-- Data Settings & Updates -->
   <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
     <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings & Updates</h3>
     <p id="lastBackupText" class="text-[11px] text-iosGray">Data is stored on this device only.</p>
@@ -155,11 +162,12 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 
 <footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span>Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.1</span>
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span>Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.2</span>
   </div>
   <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 200+ Borderless Sports Actions</p>
 </footer>
 
+<!-- Transaction Modal -->
 <div id="transactionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
   <div class="bg-iosCardDark border border-iosBorderDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[90vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4 pb-2 border-b border-iosBorderDark">
@@ -204,7 +212,6 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 </div>
 
 <script>
-// Offline support: needs sw.js uploaded next to index.html (blob-URL service workers are not allowed)
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('sw.js').catch(err => console.log('SW not registered:', err));
 }
@@ -245,7 +252,6 @@ try {
 let currentFilter = 'all', currentTxType = 'expense', chartInstance = null;
 let selectedDate = new Date(); selectedDate.setDate(1);
 
-// FIX: local-time date (not UTC) so PH entries after midnight land on the right day
 function todayLocal() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -258,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('txDate').value = todayLocal();
 });
 
-// FIX: day is always 1, so Oct 31 -> Nov never skips to December
 function changeMonth(offset) {
   selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + offset, 1);
   renderApp();
@@ -277,7 +282,7 @@ function initSwipeEvents() {
   }, { passive: true });
 }
 
-// ---------------- Stickman engine ----------------
+// ---------------- Stickman engine (200+ borderless actions) ----------------
 let currentActionIndex = 0, animationFrameId = null;
 const STICKMAN_ACTIONS = [];
 function makeRunner(speed, bounceHeight) {
@@ -345,7 +350,6 @@ function drawHead(ctx, x, y, r = 4) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.
 function drawLine(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 
 // ---------------- App engine ----------------
-// FIX: badge now shows honest connection status only. Data is local, so no fake "synced" flags.
 function initNetworkStatus() {
   window.addEventListener('online', handleNetworkChange);
   window.addEventListener('offline', handleNetworkChange);
@@ -473,7 +477,6 @@ function showModal() {
   modal.classList.remove('hidden');
   setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('translate-y-full'); }, 10);
 }
-// FIX: opening "Add" always resets the toggle and categories to Expense
 function openModal() {
   document.getElementById('txForm').reset();
   document.getElementById('editingTxId').value = '';
