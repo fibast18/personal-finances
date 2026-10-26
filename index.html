@@ -243,9 +243,9 @@
             </div>
         </section>
 
-        <!-- Management & Backup Actions (Restored Import/Export) -->
+        <!-- Management & Data Settings (Includes Update & Backup Tools) -->
         <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
-            <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings</h3>
+            <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings & Updates</h3>
             <div class="grid grid-cols-2 gap-2 text-xs">
                 <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition">
                     <i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>
@@ -253,10 +253,15 @@
                 </button>
                 <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition">
                     <i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>
-                    Import / Update JSON
+                    Import JSON
                 </button>
                 <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
             </div>
+            <!-- Check for App Update Button -->
+            <button onclick="checkForAppUpdates()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosCyan hover:bg-iosBlue/20 transition font-semibold text-xs">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                Check for App Update
+            </button>
         </section>
 
     </main>
@@ -266,9 +271,9 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
             <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span>
             <span>Rico Finances</span>
-            <span class="text-iosGray2 font-medium">v1.5.1</span>
+            <span class="text-iosGray2 font-medium">v1.5.2</span>
         </div>
-        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 100+ Sports Stickman Arena</p>
+        <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 100+ Sports Stickman & Update Tool</p>
     </footer>
 
     <!-- Modal Drawer for Adding / Editing Transaction -->
@@ -347,7 +352,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'rico-finances-v1.5.1';
+                const CACHE_NAME = 'rico-finances-v1.5.2';
                 const ASSETS = [
                     './',
                     './index.html',
@@ -384,6 +389,26 @@
             const blob = new Blob([swCode], { type: 'application/javascript' });
             const swUrl = URL.createObjectURL(blob);
             navigator.serviceWorker.register(swUrl).catch(err => console.log('SW Registration error:', err));
+        }
+
+        // Check for App Update Function
+        function checkForAppUpdates() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for(let registration of registrations) {
+                        registration.update();
+                    }
+                });
+            }
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            alert('App cache cleared & checked for updates! Reloading latest version...');
+            window.location.reload(true);
         }
     </script>
 
