@@ -1,9 +1,9 @@
-// Rico Finances offline-first service worker — v1.6.8
+// Rico Finances offline-first service worker — v1.7.0
 // Works on GitHub Pages root sites and subdirectory project sites.
-const CACHE_NAME = 'rico-finances-v1.6.8';
+const CACHE_NAME = 'rico-finances-v1.7.0';
 const CACHE_PREFIX = 'rico-finances-';
 const APP_SHELL = [
-  './', './index.html', './styles.css', './icons.js',
+  './', './index.html', './styles.css', './icons.js', './analyst.js',
   './manifest.webmanifest', './version.json',
   './rico-finances-icon-192.png', './rico-finances-icon-512.png', './apple-touch-icon.png'
 ];
@@ -33,6 +33,20 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
   const scope=new URL(self.registration.scope);
   if (!url.pathname.startsWith(scope.pathname)) return;
+
+  if (url.pathname === scope.pathname + 'version.json') {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(request, {cache:'no-store'});
+        if (response.ok) return response;
+        throw new Error('No online version');
+      } catch (_) {
+        return (await caches.match('./version.json')) ||
+          new Response('{}', {status:503, headers:{'Content-Type':'application/json'}});
+      }
+    })());
+    return;
+  }
 
   if (request.mode === 'navigate') {
     // New code becomes available on connection; offline gets the installed app.
