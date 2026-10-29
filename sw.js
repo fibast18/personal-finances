@@ -1,6 +1,6 @@
-// Rico Finances offline-first service worker — v1.6.6
+// Rico Finances offline-first service worker — v1.6.7
 // Works on GitHub Pages root sites and subdirectory project sites.
-const CACHE_NAME = 'rico-finances-v1.6.6';
+const CACHE_NAME = 'rico-finances-v1.6.7';
 const CACHE_PREFIX = 'rico-finances-';
 const APP_SHELL = [
   './', './index.html', './styles.css', './icons.js',

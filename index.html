@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Rico Finances - Real-Time Cash Flow Tracker</title>
+<title>Rico Finances - Offline Cash Flow Tracker</title>
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
-<meta name="description" content="Rico Finances offline cash flow tracker. Your transactions stay on this device.">
+<meta name="description" content="Personal offline cash flow tracker. Your transactions stay on this device.">
 <link rel="icon" type="image/png" href="rico-finances-icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Rico Finances">
+<meta name="apple-mobile-web-app-title" content="Rico Finances" id="iosAppTitle">
 <link rel="stylesheet" href="styles.css">
 <script src="icons.js"></script>
 <style>
@@ -24,23 +24,25 @@
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pb-safe">
 
-<header class="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-iosBorderDark px-4 pt-safe pb-3">
-  <div class="max-w-md mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <img src="Rico ID.JPG" onerror="this.onerror=null;this.src='rico-finances-icon-192.png';" alt="Rico" class="w-11 h-11 rounded-full object-cover border-2 border-iosBlue shadow-sm">
-      <div>
-        <h1 class="text-xs font-semibold tracking-wider text-iosGray uppercase">Rico Finances</h1>
-        <p id="userGreeting" class="text-base font-bold text-white tracking-tight">Good day, Boss Rico J.</p>
+<header id="appHeader" class="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-iosBorderDark">
+  <div class="app-header-inner max-w-md mx-auto">
+    <div class="app-header-primary">
+      <div class="app-header-person">
+        <img id="profileLogo" src="rico-finances-icon-192.png" alt="App profile image" class="app-header-logo rounded-full object-cover border-2 border-iosBlue shadow-sm">
+        <div class="app-header-copy">
+          <h1 id="appHeaderTitle">Rico Finances</h1>
+          <p id="userGreeting">Good day, Boss Rico J.</p>
+        </div>
       </div>
+      <button id="addTransactionButton" aria-label="Add transaction" onclick="openModal()" class="app-add-btn rounded-full bg-iosBlue hover:bg-blue-600 active:scale-95 transition flex items-center justify-center text-white shadow-glow-blue">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+      </button>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="app-header-secondary">
       <span id="syncStatusBadge" class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5">
         <span id="syncDot" class="w-2 h-2 rounded-full bg-iosGreen animate-pulse"></span>
         <span id="syncStatusText">Online</span>
       </span>
-      <button onclick="openModal()" class="w-9 h-9 rounded-full bg-iosBlue hover:bg-blue-600 active:scale-95 transition flex items-center justify-center text-white shadow-glow-blue">
-        <i data-lucide="plus" class="w-5 h-5"></i>
-      </button>
     </div>
   </div>
 </header>
@@ -137,13 +139,44 @@
     </div>
   </section>
 
+  <!-- Per-device personalization. These values never change financial transactions. -->
+  <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3" id="personalizeAppSection">
+    <div class="flex items-center gap-2">
+      <i data-lucide="settings" class="w-4 h-4 text-iosBlue"></i>
+      <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Personalize App</h3>
+    </div>
+    <p class="text-[11px] text-iosGray2">Make this finance tracker your own. These settings are saved privately on this device.</p>
+    <form id="personalizationForm" onsubmit="savePersonalization(event)" class="space-y-3">
+      <div>
+        <label for="customAppName" class="block text-xs text-iosGray2 mb-1">App Name</label>
+        <input id="customAppName" type="text" maxlength="40" required placeholder="e.g. My Finances" autocomplete="off" class="w-full bg-black/40 border border-iosBorderDark rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-iosBlue transition">
+      </div>
+      <div>
+        <label for="customDisplayName" class="block text-xs text-iosGray2 mb-1">Your Name / Greeting</label>
+        <input id="customDisplayName" type="text" maxlength="48" required placeholder="e.g. Boss Rico J. or Maria" autocomplete="nickname" class="w-full bg-black/40 border border-iosBorderDark rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-iosBlue transition">
+      </div>
+      <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-iosBlue text-white text-xs font-semibold"><i data-lucide="check" class="w-4 h-4"></i>Save App Settings</button>
+    </form>
+    <div class="border-t border-iosBorderDark pt-3 space-y-2">
+      <label for="profileImageInput" class="block text-xs text-iosGray2">Profile Photo / App Header Logo (optional)</label>
+      <div class="flex items-center gap-2">
+        <img id="settingsProfilePreview" src="rico-finances-icon-192.png" alt="Current profile logo" class="w-12 h-12 rounded-full object-cover border border-iosBorderDark">
+        <label class="flex-1 cursor-pointer text-center py-2.5 rounded-xl bg-black/40 border border-iosBorderDark text-xs text-white" for="profileImageInput">Choose Photo</label>
+        <button type="button" onclick="removeProfilePhoto()" class="px-3 py-2.5 rounded-xl bg-black/40 border border-iosBorderDark text-xs text-iosGray2">Reset</button>
+        <input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" onchange="uploadProfilePhoto(event)" class="hidden">
+      </div>
+      <p id="personalizationMessage" aria-live="polite" class="text-[11px] text-iosGreen"></p>
+      <p class="text-[10px] text-iosGray">Your personalized name and photo appear in this app. The installed Home Screen icon caption may need to be renamed or added again separately.</p>
+    </div>
+  </section>
+
   <!-- Data Settings & Updates -->
   <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
     <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings & Updates</h3>
     <p id="lastBackupText" class="text-[11px] text-iosGray">Data is stored on this device only.</p>
     <div class="grid grid-cols-2 gap-2 text-xs">
-      <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>Export JSON</button>
-      <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>Import JSON</button>
+      <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>Export</button>
+      <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>Import</button>
       <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
     </div>
     <button onclick="checkForAppUpdates()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosCyan hover:bg-iosBlue/20 transition font-semibold text-xs"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Check for App Update</button>
@@ -152,9 +185,9 @@
 
 <footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span>Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.6</span>
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.7</span>
   </div>
-  <p class="text-[10px] text-iosGray/60 mt-1.5">Designed for Boss Rico J. &bull; 200+ Borderless Sports Actions</p>
+  <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
 </footer>
 
 <!-- Transaction Modal -->
@@ -202,7 +235,7 @@
 </div>
 
 <script>
-const RICO_APP_VERSION = '1.6.6';
+const RICO_APP_VERSION = '1.6.7';
 let appServiceWorkerRegistration = null;
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
@@ -212,7 +245,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 async function checkForAppUpdates() {
-  if (!navigator.onLine) { alert('You are offline. Rico Finances is available offline. Reconnect to check for new versions.'); return; }
+  if (!navigator.onLine) { alert('You are offline. Your finance tracker is available offline. Reconnect to check for new versions.'); return; }
   try {
     const response = await fetch('./version.json?check=' + Date.now(), {cache:'no-store'});
     if (!response.ok) throw new Error('Version information unavailable');
@@ -220,12 +253,12 @@ async function checkForAppUpdates() {
     if (!details.version || !/^\d+\.\d+\.\d+$/.test(details.version)) throw new Error('Invalid version information');
     if (details.version === RICO_APP_VERSION) {
       if (appServiceWorkerRegistration) await appServiceWorkerRegistration.update();
-      alert('Rico Finances v' + RICO_APP_VERSION + ' is up to date. Offline files stay safely installed.');
+      alert('Version ' + RICO_APP_VERSION + ' is up to date. Offline files stay safely installed.');
       return;
     }
     const reg = appServiceWorkerRegistration || await navigator.serviceWorker.getRegistration('./');
     if (reg) await reg.update();
-    alert('Rico Finances v' + details.version + ' is available. The app will reload to use the latest files. Your saved transactions remain on this device.');
+    alert('Version ' + details.version + ' is available. The app will reload to use the latest files. Your saved transactions remain on this device.');
     location.reload();
   } catch (err) {
     alert('Could not check for updates. Your installed offline app and transactions remain unchanged.');
@@ -252,6 +285,89 @@ const INCOME_CATEGORIES = [
   { name:'Other Income', icon:'plus-circle', color:'#8e8e93' }
 ];
 
+// ----- Personalize only the local appearance, NEVER the finance transaction schema -----
+const PERSONALIZATION_KEY = 'rico_finances_preferences_v1';
+const DEFAULT_PERSONALIZATION = Object.freeze({ appName:'Rico Finances', displayName:'Boss Rico J.', photo:'' });
+let personalization = loadPersonalization();
+function loadPersonalization() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PERSONALIZATION_KEY) || '{}');
+    return {
+      appName: typeof saved.appName === 'string' && saved.appName.trim() ? saved.appName.trim().slice(0,40) : DEFAULT_PERSONALIZATION.appName,
+      displayName: typeof saved.displayName === 'string' && saved.displayName.trim() ? saved.displayName.trim().slice(0,48) : DEFAULT_PERSONALIZATION.displayName,
+      photo: typeof saved.photo === 'string' && saved.photo.startsWith('data:image/') ? saved.photo : ''
+    };
+  } catch (_) { return {...DEFAULT_PERSONALIZATION}; }
+}
+function applyPersonalization() {
+  document.getElementById('appHeaderTitle').textContent = personalization.appName;
+  document.getElementById('footerAppName').textContent = personalization.appName;
+  document.title = personalization.appName + ' - Cash Flow Tracker';
+  document.getElementById('iosAppTitle').setAttribute('content', personalization.appName);
+  const photo = personalization.photo || 'rico-finances-icon-192.png';
+  document.getElementById('profileLogo').src = photo;
+  document.getElementById('settingsProfilePreview').src = photo;
+  updateGreeting();
+}
+function initPersonalization() {
+  document.getElementById('customAppName').value = personalization.appName;
+  document.getElementById('customDisplayName').value = personalization.displayName;
+  applyPersonalization();
+}
+function savePersonalization(event) {
+  if (event) event.preventDefault();
+  const appName = document.getElementById('customAppName').value.trim().slice(0,40);
+  const displayName = document.getElementById('customDisplayName').value.trim().slice(0,48);
+  if (!appName || !displayName) { alert('Please enter both an app name and your name.'); return; }
+  const updated = { ...personalization, appName, displayName };
+  try {
+    localStorage.setItem(PERSONALIZATION_KEY, JSON.stringify(updated));
+    personalization = updated;
+    applyPersonalization();
+    document.getElementById('personalizationMessage').textContent = 'Saved! Your app name and greeting have been updated.';
+  } catch (_) { alert('Unable to save your settings. Check device storage permissions.'); }
+}
+function uploadProfilePhoto(event) {
+  const input = event.target;
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/') && !/\.(heic|heif|jpg|jpeg|png|webp)$/i.test(file.name)) { alert('Please choose an image file.'); input.value=''; return; }
+  if (file.size > 12*1024*1024) { alert('Choose a photo smaller than 12 MB.'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width=256; canvas.height=256;
+        const ctx = canvas.getContext('2d');
+        const side = Math.min(img.naturalWidth, img.naturalHeight);
+        const sx = (img.naturalWidth-side)/2, sy = (img.naturalHeight-side)/2;
+        ctx.drawImage(img,sx,sy,side,side,0,0,256,256);
+        const photo = canvas.toDataURL('image/jpeg',0.82);
+        const updated = {...personalization, photo};
+        localStorage.setItem(PERSONALIZATION_KEY,JSON.stringify(updated));
+        personalization=updated; applyPersonalization();
+        document.getElementById('personalizationMessage').textContent = 'Profile photo saved on this device.';
+      } catch (error) { alert('Photo could not be stored. Try a smaller JPEG or PNG image.'); }
+      input.value='';
+    };
+    img.onerror = () => { alert('This photo format could not be decoded. Try JPEG or PNG.'); input.value=''; };
+    img.src = reader.result;
+  };
+  reader.onerror = () => { alert('Could not read that photo.'); input.value=''; };
+  reader.readAsDataURL(file);
+}
+function removeProfilePhoto() {
+  try {
+    const updated={...personalization,photo:''};
+    localStorage.setItem(PERSONALIZATION_KEY,JSON.stringify(updated));
+    personalization=updated; applyPersonalization();
+    document.getElementById('profileImageInput').value='';
+    document.getElementById('personalizationMessage').textContent='Photo reset to the default icon.';
+  } catch (_) { alert('Could not reset the photo.'); }
+}
+
 let transactions = [];
 try {
   const a = JSON.parse(localStorage.getItem('rico_finances_txs') || '[]');
@@ -269,7 +385,7 @@ function todayLocal() {
 function parseLocalDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateGreeting(); updateCategoryDropdown(); initNetworkStatus(); initSwipeEvents();
+  initPersonalization(); updateCategoryDropdown(); initNetworkStatus(); initSwipeEvents();
   renderApp(); initStickmanAnimation(); updateBackupInfo(); lucide.createIcons();
   document.getElementById('txDate').value = todayLocal();
 });
@@ -383,7 +499,7 @@ function persistData() {
 function updateGreeting() {
   const h = new Date().getHours();
   const g = h >= 5 && h < 12 ? 'Good morning' : (h >= 12 && h < 18 ? 'Good afternoon' : 'Good evening');
-  document.getElementById('userGreeting').textContent = `${g}, Boss Rico J.`;
+  document.getElementById('userGreeting').textContent = `${g}, ${personalization.displayName}`;
 }
 function formatPHP(amount) {
   return new Intl.NumberFormat('en-PH', { style:'currency', currency:'PHP', minimumFractionDigits:2 }).format(amount).replace('PHP', '₱');
