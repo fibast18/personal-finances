@@ -1,4 +1,4 @@
-/* Rico Finances v1.7.0 — fully offline, rule-based, read-only Analyst.
+/* Rico Finances v1.7.1 — fully offline, rule-based, read-only Analyst.
    No external model/API, network calls, or transaction mutations.
    Uses the existing 'transactions' and 'selectedDate' variables. */
 (function () {

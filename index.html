@@ -22,17 +22,21 @@
 .pb-safe{padding-bottom:env(safe-area-inset-bottom,20px)}
 .pt-safe{padding-top:env(safe-area-inset-top,20px)}
 
-/* Rico Finances v1.7.0 core controls: inline so an older CSS cache cannot enlarge profile photo. */
+/* Rico Finances v1.7.1 core controls: inline so an older CSS cache cannot enlarge profile photo. */
 #appHeader{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.94);border-bottom:1px solid #2c2c2e;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 #appHeader .app-header-inner{width:100%;max-width:448px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;box-sizing:border-box}
 #appHeader .app-header-primary{display:flex!important;justify-content:space-between;align-items:center;gap:10px;min-width:0}
 #appHeader .app-header-person{display:flex!important;align-items:center;gap:11px;min-width:0;flex:1 1 auto;overflow:hidden}
 #appHeader #profileLogo{width:78px!important;height:78px!important;min-width:78px!important;max-width:78px!important;max-height:78px!important;min-height:78px!important;aspect-ratio:1/1;object-fit:cover;flex:0 0 78px;display:block;border-radius:50%;border:2px solid #0a84ff;background:#1c1c1e}
 #appHeader .app-header-copy{flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden}
-#appHeader #appHeaderTitle{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;display:block;color:#fff;font-size:22.5px;font-weight:800;letter-spacing:.1px;line-height:1.3;margin:0;overflow-wrap:anywhere}
-#appHeader #userGreeting{display:block;color:#e5e5ea;font-size:21px;font-weight:650;line-height:1.35;margin:3px 0 0;overflow-wrap:anywhere}
-#appHeader .app-settings-btn{flex:0 0 44px;display:flex;justify-content:center;align-items:center;width:44px;height:44px;border-radius:15px;color:#f2f2f7;background:#1c1c1e;border:1px solid #3a3a3c;cursor:pointer;touch-action:manipulation}
+#appHeader #appHeaderTitle{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;display:block;color:#fff;font-size:18px;font-weight:800;letter-spacing:.1px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+#appHeader #userGreeting{display:block;color:#e5e5ea;font-size:16.8px;font-weight:650;line-height:1.35;margin:3px 0 0;overflow-wrap:anywhere}
+#appHeader .app-settings-btn{flex:0 0 42px;display:flex;justify-content:center;align-items:center;width:42px;height:42px;border-radius:14px;color:#f2f2f7;background:#1c1c1e;border:1px solid #3a3a3c;cursor:pointer;touch-action:manipulation}
 #appHeader .app-settings-btn svg{width:22px;height:22px}
+#appHeader .app-header-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#appHeader .app-ai-btn{display:flex;justify-content:center;align-items:center;gap:2px;flex:0 0 42px;width:42px;height:42px;border-radius:14px;color:#dfc4ff;background:#261d32;border:1px solid #684b89;font-weight:800;font-size:14px;cursor:pointer;touch-action:manipulation}
+#appHeader .app-ai-btn .ai-button-star{font-size:10px;align-self:flex-start;margin-top:10px}
+#appHeader .app-ai-btn:focus-visible,#appHeader .app-settings-btn:focus-visible{outline:2px solid #bf8cff;outline-offset:2px}
 #appHeader .app-header-secondary{display:flex;justify-content:flex-end;margin-top:7px;min-height:18px}
 #appHeader #syncStatusBadge{width:auto;max-width:max-content;white-space:nowrap}
 .floating-add-btn{position:fixed!important;left:18px!important;bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;z-index:45!important;display:flex!important;width:66px!important;height:66px!important;border-radius:50%!important;align-items:center!important;justify-content:center!important;background:#0a84ff!important;color:#fff!important;border:1px solid rgba(255,255,255,.24);box-shadow:0 9px 30px rgba(10,132,255,.42)!important;cursor:pointer;touch-action:manipulation;transition:transform .15s ease,box-shadow .15s ease}
@@ -45,8 +49,18 @@ body>main{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important
 .app-settings-modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #353537}
 .app-settings-modal-header h2{font-size:18px;font-weight:750;color:#fff;margin:0}
 .app-settings-close{display:flex;justify-content:center;align-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:#303034;color:white;border:1px solid #444;cursor:pointer}
-body.personalization-open{overflow:hidden;touch-action:pan-y}
-@media(max-width:355px){#appHeader #profileLogo{width:69px!important;height:69px!important;min-width:69px!important;max-width:69px!important;max-height:69px!important;min-height:69px!important;flex-basis:69px}#appHeader #appHeaderTitle{font-size:21px}#appHeader #userGreeting{font-size:18px}#appHeader .app-header-inner{padding-left:12px;padding-right:12px}}
+body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-y}
+.ai-analyst-dialog{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-sizing:border-box;background:rgba(0,0,0,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ai-analyst-dialog.hidden{display:none!important}
+.ai-analyst-modal-panel{width:100%;max-width:430px;max-height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:24px;box-shadow:0 25px 70px rgba(0,0,0,.7)}
+#aiAnalystSection{margin:0}
+#aiAnalystSection .ai-analyst-heading{align-items:center;gap:7px}
+#aiAnalystSection .ai-analyst-heading>div{min-width:0;flex:1}
+#aiAnalystSection .ai-analyst-offline{font-size:9px;padding:4px 6px;flex-shrink:0}
+.ai-analyst-close{display:flex;align-items:center;justify-content:center;flex:0 0 35px;width:35px;height:35px;border-radius:50%;background:#35303d;color:#fff;border:1px solid #62506d;cursor:pointer;touch-action:manipulation}
+.ai-analyst-close svg{width:18px;height:18px}
+.ai-analyst-close:focus-visible{outline:2px solid #bf8cff;outline-offset:2px}
+@media(max-width:355px){#appHeader #profileLogo{width:69px!important;height:69px!important;min-width:69px!important;max-width:69px!important;max-height:69px!important;min-height:69px!important;flex-basis:69px}#appHeader #appHeaderTitle{font-size:16px}#appHeader #userGreeting{font-size:15px}#appHeader .app-header-inner{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pb-safe">
@@ -61,9 +75,14 @@ body.personalization-open{overflow:hidden;touch-action:pan-y}
           <p id="userGreeting">Good day, Boss Rico J.</p>
         </div>
       </div>
-      <button id="settingsButton" type="button" aria-label="Personalize app" title="Personalize app" aria-haspopup="dialog" aria-controls="personalizationDialog" onclick="openPersonalization()" class="app-settings-btn">
-        <i data-lucide="settings" class="w-5 h-5"></i>
-      </button>
+      <div class="app-header-actions">
+        <button id="aiAnalystButton" type="button" aria-label="Open AI Analyst" title="AI Analyst" aria-haspopup="dialog" aria-controls="aiAnalystDialog" onclick="openAIAnalyst()" class="app-ai-btn">
+          <span class="ai-button-star" aria-hidden="true">✦</span><span aria-hidden="true">AI</span>
+        </button>
+        <button id="settingsButton" type="button" aria-label="Personalize app" title="Personalize app" aria-haspopup="dialog" aria-controls="personalizationDialog" onclick="openPersonalization()" class="app-settings-btn">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+      </div>
     </div>
     <div class="app-header-secondary">
       <span id="syncStatusBadge" class="px-2.5 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[10px] font-semibold tracking-wide uppercase text-iosGreen flex items-center gap-1.5">
@@ -154,37 +173,6 @@ body.personalization-open{overflow:hidden;touch-action:pan-y}
   </section>
 
 
-  <!-- AI Analyst: fully on-device and read-only, never uploads or changes transactions. -->
-  <section id="aiAnalystSection" class="ai-analyst-panel" aria-labelledby="aiAnalystHeading">
-    <div class="ai-analyst-heading">
-      <div>
-        <h2 id="aiAnalystHeading" class="ai-analyst-title"><span class="ai-analyst-star" aria-hidden="true">✦</span> AI Analyst</h2>
-        <p class="ai-analyst-subtitle">Your monthly cash flow, explained</p>
-      </div>
-      <span class="ai-analyst-offline">ON-DEVICE</span>
-    </div>
-    <p id="aiAnalystPeriod" class="ai-analyst-period">Analyzing selected month…</p>
-    <div id="aiAnalystOverview" class="ai-metric-grid" aria-live="polite"></div>
-    <h3 class="ai-analyst-minititle">Key findings</h3>
-    <div id="aiAnalystHighlights" class="ai-analyst-findings" aria-live="polite"></div>
-    <details id="aiAnalystMore" class="ai-analyst-details">
-      <summary>Explore trends &amp; ask the Analyst <span aria-hidden="true">⌄</span></summary>
-      <div class="ai-analyst-expanded">
-        <h3 class="ai-analyst-minititle">Last 6 months · recorded expenses</h3>
-        <div id="aiAnalystTrend" class="ai-analyst-history"></div>
-        <h3 class="ai-analyst-minititle">Ask about this month</h3>
-        <div class="ai-question-grid" role="group" aria-label="Ask financial analyst">
-          <button type="button" onclick="askFinanceAnalyst('summary')">Cash flow</button>
-          <button type="button" onclick="askFinanceAnalyst('spending')">Top spending</button>
-          <button type="button" onclick="askFinanceAnalyst('compare')">Last month</button>
-          <button type="button" onclick="askFinanceAnalyst('savings')">Saving ideas</button>
-        </div>
-        <p id="aiAnalystAnswer" class="ai-analyst-answer" role="status">Choose a question to see an explanation based on your records.</p>
-      </div>
-    </details>
-    <p class="ai-analyst-disclaimer">Free, offline, built-in rule-based analysis—not a cloud AI model. It only reads this device's logged transactions; missing entries affect accuracy. Suggestions are informational, not professional financial advice.</p>
-  </section>
-
   <!-- Transactions Feed -->
   <section class="space-y-3">
     <div class="flex items-center justify-between px-1">
@@ -218,11 +206,49 @@ body.personalization-open{overflow:hidden;touch-action:pan-y}
 
 <footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.7.0</span>
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.7.1</span>
   </div>
   <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
   <p id="developerCredit" class="mt-2 text-[11px] text-iosGray2 font-medium">Developed by: Engr. Rico J. Pono</p>
 </footer>
+
+<!-- AI Analyst stays off the main dashboard and opens only when AI is tapped. -->
+<div id="aiAnalystDialog" class="ai-analyst-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="aiAnalystHeading" aria-hidden="true" onclick="if(event.target===this)closeAIAnalyst()">
+  <div class="ai-analyst-modal-panel" role="document">
+  <!-- AI Analyst: fully on-device and read-only, never uploads or changes transactions. -->
+    <section id="aiAnalystSection" class="ai-analyst-panel" aria-labelledby="aiAnalystHeading">
+    <div class="ai-analyst-heading">
+      <div>
+        <h2 id="aiAnalystHeading" class="ai-analyst-title"><span class="ai-analyst-star" aria-hidden="true">✦</span> AI Analyst</h2>
+        <p class="ai-analyst-subtitle">Your monthly cash flow, explained</p>
+      </div>
+      <span class="ai-analyst-offline">ON-DEVICE</span>
+      <button id="closeAIAnalystButton" type="button" class="ai-analyst-close" onclick="closeAIAnalyst()" aria-label="Close AI Analyst" title="Close AI Analyst"><i data-lucide="x"></i></button>
+    </div>
+    <p id="aiAnalystPeriod" class="ai-analyst-period">Analyzing selected month…</p>
+    <div id="aiAnalystOverview" class="ai-metric-grid" aria-live="polite"></div>
+    <h3 class="ai-analyst-minititle">Key findings</h3>
+    <div id="aiAnalystHighlights" class="ai-analyst-findings" aria-live="polite"></div>
+    <details id="aiAnalystMore" class="ai-analyst-details">
+      <summary>Explore trends &amp; ask the Analyst <span aria-hidden="true">⌄</span></summary>
+      <div class="ai-analyst-expanded">
+        <h3 class="ai-analyst-minititle">Last 6 months · recorded expenses</h3>
+        <div id="aiAnalystTrend" class="ai-analyst-history"></div>
+        <h3 class="ai-analyst-minititle">Ask about this month</h3>
+        <div class="ai-question-grid" role="group" aria-label="Ask financial analyst">
+          <button type="button" onclick="askFinanceAnalyst('summary')">Cash flow</button>
+          <button type="button" onclick="askFinanceAnalyst('spending')">Top spending</button>
+          <button type="button" onclick="askFinanceAnalyst('compare')">Last month</button>
+          <button type="button" onclick="askFinanceAnalyst('savings')">Saving ideas</button>
+        </div>
+        <p id="aiAnalystAnswer" class="ai-analyst-answer" role="status">Choose a question to see an explanation based on your records.</p>
+      </div>
+    </details>
+    <p class="ai-analyst-disclaimer">Free, offline, built-in rule-based analysis—not a cloud AI model. It only reads this device's logged transactions; missing entries affect accuracy. Suggestions are informational, not professional financial advice.</p>
+    </section>
+
+  </div>
+</div>
 
 <!-- Hidden until the top gear is tapped. Kept entirely outside the scrolling feed. -->
 <div id="personalizationDialog" class="personalization-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle" aria-hidden="true" onclick="if(event.target===this)closePersonalization()">
@@ -306,7 +332,7 @@ body.personalization-open{overflow:hidden;touch-action:pan-y}
 </div>
 
 <script>
-const RICO_APP_VERSION = '1.7.0';
+const RICO_APP_VERSION = '1.7.1';
 let appServiceWorkerRegistration = null;
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
@@ -358,6 +384,39 @@ const INCOME_CATEGORIES = [
   { name:'Other Income', icon:'plus-circle', color:'#8e8e93' }
 ];
 
+
+// On-device Analyst pop-up. Existing financial data and analyzer remain read-only.
+let aiAnalystReturnFocus = null;
+function openAIAnalyst() {
+  const dialog = document.getElementById('aiAnalystDialog');
+  if (!dialog) return;
+  aiAnalystReturnFocus = document.activeElement;
+  if (typeof window.renderFinanceAnalyst === 'function') window.renderFinanceAnalyst();
+  dialog.classList.remove('hidden');
+  dialog.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('ai-analyst-open');
+  document.getElementById('closeAIAnalystButton').focus();
+}
+function closeAIAnalyst() {
+  const dialog = document.getElementById('aiAnalystDialog');
+  if (!dialog) return;
+  dialog.classList.add('hidden');
+  dialog.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('ai-analyst-open');
+  if (aiAnalystReturnFocus && typeof aiAnalystReturnFocus.focus === 'function') aiAnalystReturnFocus.focus();
+}
+document.addEventListener('keydown', event => {
+  const dialog = document.getElementById('aiAnalystDialog');
+  if (!dialog || dialog.classList.contains('hidden')) return;
+  if (event.key === 'Escape') {event.preventDefault();closeAIAnalyst();return;}
+  if (event.key !== 'Tab') return;
+  const focusable = [...dialog.querySelectorAll('button, input:not([type="hidden"]), select, textarea, a[href], summary')]
+    .filter(el => !el.disabled && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+  if (!focusable.length) { event.preventDefault(); return; }
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault();last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault();first.focus(); }
+});
 
 // A single accessible settings dialog; never affects saved financial transactions.
 let personalizationReturnFocus = null;
