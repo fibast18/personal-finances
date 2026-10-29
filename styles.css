@@ -1454,3 +1454,32 @@
 .app-header-secondary{display:flex;justify-content:flex-end;align-items:center;min-height:24px;margin-top:5px;}
 #syncStatusBadge{white-space:nowrap;}
 @media(max-width:350px){.app-header-logo{width:45px;height:45px}.app-header-person{gap:9px}#appHeaderTitle{font-size:14px}#userGreeting{font-size:12px}.app-add-btn{width:39px;height:39px}}
+
+/* v1.6.8 compact header and floating actions (critical rules also embedded in index.html). */
+
+/* Rico Finances v1.6.8 core controls: inline so an older CSS cache cannot enlarge profile photo. */
+#appHeader{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.94);border-bottom:1px solid #2c2c2e;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#appHeader .app-header-inner{width:100%;max-width:448px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;box-sizing:border-box}
+#appHeader .app-header-primary{display:flex!important;justify-content:space-between;align-items:center;gap:10px;min-width:0}
+#appHeader .app-header-person{display:flex!important;align-items:center;gap:11px;min-width:0;flex:1 1 auto;overflow:hidden}
+#appHeader #profileLogo{width:52px!important;height:52px!important;min-width:52px!important;max-width:52px!important;max-height:52px!important;min-height:52px!important;aspect-ratio:1/1;object-fit:cover;flex:0 0 52px;display:block;border-radius:50%;border:2px solid #0a84ff;background:#1c1c1e}
+#appHeader .app-header-copy{flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden}
+#appHeader #appHeaderTitle{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;display:block;color:#fff;font-size:15px;font-weight:800;letter-spacing:.1px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+#appHeader #userGreeting{display:block;color:#e5e5ea;font-size:14px;font-weight:650;line-height:1.35;margin:3px 0 0;overflow-wrap:anywhere}
+#appHeader .app-settings-btn{flex:0 0 44px;display:flex;justify-content:center;align-items:center;width:44px;height:44px;border-radius:15px;color:#f2f2f7;background:#1c1c1e;border:1px solid #3a3a3c;cursor:pointer;touch-action:manipulation}
+#appHeader .app-settings-btn svg{width:22px;height:22px}
+#appHeader .app-header-secondary{display:flex;justify-content:flex-end;margin-top:7px;min-height:18px}
+#appHeader #syncStatusBadge{width:auto;max-width:max-content;white-space:nowrap}
+.floating-add-btn{position:fixed!important;left:18px!important;bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;z-index:45!important;display:flex!important;width:66px!important;height:66px!important;border-radius:50%!important;align-items:center!important;justify-content:center!important;background:#0a84ff!important;color:#fff!important;border:1px solid rgba(255,255,255,.24);box-shadow:0 9px 30px rgba(10,132,255,.42)!important;cursor:pointer;touch-action:manipulation;transition:transform .15s ease,box-shadow .15s ease}
+.floating-add-btn:active{transform:scale(.94)}.floating-add-btn svg{width:32px!important;height:32px!important;stroke-width:2.5}
+body>main{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}
+.personalization-dialog{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+.personalization-dialog.hidden{display:none!important}
+.personalization-panel{width:100%;max-width:430px;max-height:100%;overflow-y:auto;overscroll-behavior:contain;border-radius:24px;box-shadow:0 25px 70px rgba(0,0,0,.7);-webkit-overflow-scrolling:touch;background:#1c1c1e}
+#personalizeAppSection{width:100%;margin:0;background:#1c1c1e}
+.app-settings-modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #353537}
+.app-settings-modal-header h2{font-size:18px;font-weight:750;color:#fff;margin:0}
+.app-settings-close{display:flex;justify-content:center;align-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:#303034;color:white;border:1px solid #444;cursor:pointer}
+body.personalization-open{overflow:hidden;touch-action:pan-y}
+@media(max-width:355px){#appHeader #profileLogo{width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;max-height:46px!important;min-height:46px!important;flex-basis:46px}#appHeader #appHeaderTitle{font-size:14px}#appHeader #userGreeting{font-size:12px}#appHeader .app-header-inner{padding-left:12px;padding-right:12px}}
+

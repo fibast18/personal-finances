@@ -20,6 +20,32 @@
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px}
 .pb-safe{padding-bottom:env(safe-area-inset-bottom,20px)}
 .pt-safe{padding-top:env(safe-area-inset-top,20px)}
+
+/* Rico Finances v1.6.8 core controls: inline so an older CSS cache cannot enlarge profile photo. */
+#appHeader{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.94);border-bottom:1px solid #2c2c2e;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#appHeader .app-header-inner{width:100%;max-width:448px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;box-sizing:border-box}
+#appHeader .app-header-primary{display:flex!important;justify-content:space-between;align-items:center;gap:10px;min-width:0}
+#appHeader .app-header-person{display:flex!important;align-items:center;gap:11px;min-width:0;flex:1 1 auto;overflow:hidden}
+#appHeader #profileLogo{width:52px!important;height:52px!important;min-width:52px!important;max-width:52px!important;max-height:52px!important;min-height:52px!important;aspect-ratio:1/1;object-fit:cover;flex:0 0 52px;display:block;border-radius:50%;border:2px solid #0a84ff;background:#1c1c1e}
+#appHeader .app-header-copy{flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden}
+#appHeader #appHeaderTitle{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;display:block;color:#fff;font-size:15px;font-weight:800;letter-spacing:.1px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+#appHeader #userGreeting{display:block;color:#e5e5ea;font-size:14px;font-weight:650;line-height:1.35;margin:3px 0 0;overflow-wrap:anywhere}
+#appHeader .app-settings-btn{flex:0 0 44px;display:flex;justify-content:center;align-items:center;width:44px;height:44px;border-radius:15px;color:#f2f2f7;background:#1c1c1e;border:1px solid #3a3a3c;cursor:pointer;touch-action:manipulation}
+#appHeader .app-settings-btn svg{width:22px;height:22px}
+#appHeader .app-header-secondary{display:flex;justify-content:flex-end;margin-top:7px;min-height:18px}
+#appHeader #syncStatusBadge{width:auto;max-width:max-content;white-space:nowrap}
+.floating-add-btn{position:fixed!important;left:18px!important;bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;z-index:45!important;display:flex!important;width:66px!important;height:66px!important;border-radius:50%!important;align-items:center!important;justify-content:center!important;background:#0a84ff!important;color:#fff!important;border:1px solid rgba(255,255,255,.24);box-shadow:0 9px 30px rgba(10,132,255,.42)!important;cursor:pointer;touch-action:manipulation;transition:transform .15s ease,box-shadow .15s ease}
+.floating-add-btn:active{transform:scale(.94)}.floating-add-btn svg{width:32px!important;height:32px!important;stroke-width:2.5}
+body>main{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}
+.personalization-dialog{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+.personalization-dialog.hidden{display:none!important}
+.personalization-panel{width:100%;max-width:430px;max-height:100%;overflow-y:auto;overscroll-behavior:contain;border-radius:24px;box-shadow:0 25px 70px rgba(0,0,0,.7);-webkit-overflow-scrolling:touch;background:#1c1c1e}
+#personalizeAppSection{width:100%;margin:0;background:#1c1c1e}
+.app-settings-modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #353537}
+.app-settings-modal-header h2{font-size:18px;font-weight:750;color:#fff;margin:0}
+.app-settings-close{display:flex;justify-content:center;align-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:#303034;color:white;border:1px solid #444;cursor:pointer}
+body.personalization-open{overflow:hidden;touch-action:pan-y}
+@media(max-width:355px){#appHeader #profileLogo{width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;max-height:46px!important;min-height:46px!important;flex-basis:46px}#appHeader #appHeaderTitle{font-size:14px}#appHeader #userGreeting{font-size:12px}#appHeader .app-header-inner{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue selection:text-white pb-safe">
@@ -28,14 +54,14 @@
   <div class="app-header-inner max-w-md mx-auto">
     <div class="app-header-primary">
       <div class="app-header-person">
-        <img id="profileLogo" src="rico-finances-icon-192.png" alt="App profile image" class="app-header-logo rounded-full object-cover border-2 border-iosBlue shadow-sm">
+        <img id="profileLogo" src="rico-finances-icon-192.png" alt="App profile photo" class="app-header-logo rounded-full object-cover border-2 border-iosBlue shadow-sm" width="52" height="52" style="width:52px!important;height:52px!important;min-width:52px;max-width:52px!important;min-height:52px;max-height:52px!important;object-fit:cover;flex:none;aspect-ratio:1/1">
         <div class="app-header-copy">
           <h1 id="appHeaderTitle">Rico Finances</h1>
           <p id="userGreeting">Good day, Boss Rico J.</p>
         </div>
       </div>
-      <button id="addTransactionButton" aria-label="Add transaction" onclick="openModal()" class="app-add-btn rounded-full bg-iosBlue hover:bg-blue-600 active:scale-95 transition flex items-center justify-center text-white shadow-glow-blue">
-        <i data-lucide="plus" class="w-5 h-5"></i>
+      <button id="settingsButton" type="button" aria-label="Personalize app" title="Personalize app" aria-haspopup="dialog" aria-controls="personalizationDialog" onclick="openPersonalization()" class="app-settings-btn">
+        <i data-lucide="settings" class="w-5 h-5"></i>
       </button>
     </div>
     <div class="app-header-secondary">
@@ -46,6 +72,11 @@
     </div>
   </div>
 </header>
+
+<!-- Persistent action control: bottom-left, 1.5x previous 43px header button. -->
+<button id="addTransactionButton" type="button" aria-label="Add transaction" title="Add transaction" onclick="openModal()" class="floating-add-btn" style="position:fixed;left:18px;bottom:calc(24px + env(safe-area-inset-bottom, 0px));width:66px;height:66px;z-index:45;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#0a84ff;color:#fff;box-shadow:0 10px 30px rgba(10,132,255,.4)">
+  <i data-lucide="plus" class="w-8 h-8"></i>
+</button>
 
 <main class="max-w-md mx-auto w-full px-4 py-4 space-y-5 flex-1">
 
@@ -135,15 +166,38 @@
     <div id="emptyState" class="hidden text-center py-10 bg-iosCardDark/50 rounded-3xl border border-iosBorderDark/50">
       <div class="w-12 h-12 rounded-full bg-iosCardDark flex items-center justify-center mx-auto mb-2 text-iosGray"><i data-lucide="receipt" class="w-6 h-6"></i></div>
       <p class="text-sm font-medium text-white">No transactions for this month</p>
-      <p class="text-xs text-iosGray mt-0.5">Tap the "+" button above to log cash flow.</p>
+      <p class="text-xs text-iosGray mt-0.5">Tap the blue + button below to log cash flow.</p>
     </div>
   </section>
 
+  <!-- Data Settings & Updates -->
+  <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
+    <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings & Updates</h3>
+    <p id="lastBackupText" class="text-[11px] text-iosGray">Data is stored on this device only.</p>
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>Export</button>
+      <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>Import</button>
+      <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
+    </div>
+    <button onclick="checkForAppUpdates()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosCyan hover:bg-iosBlue/20 transition font-semibold text-xs"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Check for App Update</button>
+  </section>
+</main>
+
+<footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.8</span>
+  </div>
+  <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
+</footer>
+
+<!-- Hidden until the top gear is tapped. Kept entirely outside the scrolling feed. -->
+<div id="personalizationDialog" class="personalization-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="personalizationTitle" aria-hidden="true" onclick="if(event.target===this)closePersonalization()">
+  <div class="personalization-panel" role="document">
   <!-- Per-device personalization. These values never change financial transactions. -->
-  <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3" id="personalizeAppSection">
-    <div class="flex items-center gap-2">
-      <i data-lucide="settings" class="w-4 h-4 text-iosBlue"></i>
-      <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Personalize App</h3>
+<section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3" id="personalizeAppSection">
+    <div class="app-settings-modal-header">
+      <h2 id="personalizationTitle">Personalize App</h2>
+      <button id="closePersonalizationButton" type="button" onclick="closePersonalization()" aria-label="Close personalization" class="app-settings-close"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <p class="text-[11px] text-iosGray2">Make this finance tracker your own. These settings are saved privately on this device.</p>
     <form id="personalizationForm" onsubmit="savePersonalization(event)" class="space-y-3">
@@ -168,27 +222,10 @@
       <p id="personalizationMessage" aria-live="polite" class="text-[11px] text-iosGreen"></p>
       <p class="text-[10px] text-iosGray">Your personalized name and photo appear in this app. The installed Home Screen icon caption may need to be renamed or added again separately.</p>
     </div>
-  </section>
+</section>
 
-  <!-- Data Settings & Updates -->
-  <section class="bg-iosCardDark rounded-3xl p-4 border border-iosBorderDark space-y-3">
-    <h3 class="text-xs font-semibold text-iosGray uppercase tracking-wider">Data Settings & Updates</h3>
-    <p id="lastBackupText" class="text-[11px] text-iosGray">Data is stored on this device only.</p>
-    <div class="grid grid-cols-2 gap-2 text-xs">
-      <button onclick="exportData()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="download" class="w-3.5 h-3.5 text-iosBlue"></i>Export</button>
-      <button onclick="document.getElementById('importFileInput').click()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-black/40 border border-iosBorderDark text-iosGray3 hover:text-white hover:bg-black/70 transition"><i data-lucide="upload" class="w-3.5 h-3.5 text-iosGreen"></i>Import</button>
-      <input type="file" id="importFileInput" onchange="importData(event)" accept=".json" class="hidden">
-    </div>
-    <button onclick="checkForAppUpdates()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-iosBlue/10 border border-iosBlue/30 text-iosCyan hover:bg-iosBlue/20 transition font-semibold text-xs"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Check for App Update</button>
-  </section>
-</main>
-
-<footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
-  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.6.7</span>
   </div>
-  <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
-</footer>
+</div>
 
 <!-- Transaction Modal -->
 <div id="transactionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
@@ -235,7 +272,7 @@
 </div>
 
 <script>
-const RICO_APP_VERSION = '1.6.7';
+const RICO_APP_VERSION = '1.6.8';
 let appServiceWorkerRegistration = null;
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
@@ -284,6 +321,41 @@ const INCOME_CATEGORIES = [
   { name:'Gifts & Allowance', icon:'gift', color:'#ff375f' },
   { name:'Other Income', icon:'plus-circle', color:'#8e8e93' }
 ];
+
+
+// A single accessible settings dialog; never affects saved financial transactions.
+let personalizationReturnFocus = null;
+function openPersonalization() {
+  const modal = document.getElementById('personalizationDialog');
+  personalizationReturnFocus = document.activeElement;
+  document.getElementById('customAppName').value = personalization.appName;
+  document.getElementById('customDisplayName').value = personalization.displayName;
+  document.getElementById('personalizationMessage').textContent = '';
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('personalization-open');
+  document.getElementById('closePersonalizationButton').focus();
+}
+function closePersonalization() {
+  const modal = document.getElementById('personalizationDialog');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('personalization-open');
+  if (personalizationReturnFocus && typeof personalizationReturnFocus.focus === 'function') personalizationReturnFocus.focus();
+}
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('personalizationDialog');
+  if (modal && !modal.classList.contains('hidden')) {
+    if (e.key === 'Escape') { closePersonalization(); return; }
+    if (e.key === 'Tab') {
+      const visible = [...modal.querySelectorAll('button, input:not([type="hidden"]), select, textarea, a[href]')].filter(el => !el.disabled && el.offsetParent !== null);
+      if (!visible.length) return;
+      const first = visible[0], last = visible[visible.length-1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
+});
 
 // ----- Personalize only the local appearance, NEVER the finance transaction schema -----
 const PERSONALIZATION_KEY = 'rico_finances_preferences_v1';
