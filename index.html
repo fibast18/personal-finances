@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Rico Finances - Offline Cash Flow Tracker</title>
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>My Finances - Offline Cash Flow Tracker</title>
+<link rel="apple-touch-icon" sizes="180x180" href="my-finances-apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="Personal offline cash flow tracker. Your transactions stay on this device.">
-<link rel="icon" type="image/png" href="rico-finances-icon-192.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Rico Finances" id="iosAppTitle">
+<meta name="apple-mobile-web-app-title" content="My Finances" id="iosAppTitle">
 <link rel="stylesheet" href="styles.css">
 <script src="icons.js"></script>
 <script src="analyst.js" defer></script>
@@ -22,7 +22,7 @@
 .pb-safe{padding-bottom:env(safe-area-inset-bottom,20px)}
 .pt-safe{padding-top:env(safe-area-inset-top,20px)}
 
-/* Rico Finances v1.7.1 core controls: inline so an older CSS cache cannot enlarge profile photo. */
+/* My Finances v1.7.2 core controls: inline so an older CSS cache cannot enlarge profile photo. */
 #appHeader{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.94);border-bottom:1px solid #2c2c2e;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 #appHeader .app-header-inner{width:100%;max-width:448px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;box-sizing:border-box}
 #appHeader .app-header-primary{display:flex!important;justify-content:space-between;align-items:center;gap:10px;min-width:0}
@@ -69,9 +69,9 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
   <div class="app-header-inner max-w-md mx-auto">
     <div class="app-header-primary">
       <div class="app-header-person">
-        <img id="profileLogo" src="rico-finances-icon-192.png" alt="App profile photo" class="app-header-logo rounded-full object-cover border-2 border-iosBlue shadow-sm" width="78" height="78" style="object-fit:cover;aspect-ratio:1/1">
+        <img id="profileLogo" src="my-finances-icon-192.png" alt="App profile photo" class="app-header-logo rounded-full object-cover border-2 border-iosBlue shadow-sm" width="78" height="78" style="object-fit:cover;aspect-ratio:1/1">
         <div class="app-header-copy">
-          <h1 id="appHeaderTitle">Rico Finances</h1>
+          <h1 id="appHeaderTitle">My Finances</h1>
           <p id="userGreeting">Good day, Boss Rico J.</p>
         </div>
       </div>
@@ -206,7 +206,7 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
 
 <footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">Rico Finances</span><span class="text-iosGray2 font-medium">v1.7.1</span>
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">My Finances</span><span class="text-iosGray2 font-medium">v1.7.2</span>
   </div>
   <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
   <p id="developerCredit" class="mt-2 text-[11px] text-iosGray2 font-medium">Developed by: Engr. Rico J. Pono</p>
@@ -274,13 +274,13 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
     <div class="border-t border-iosBorderDark pt-3 space-y-2">
       <label for="profileImageInput" class="block text-xs text-iosGray2">Profile Photo / App Header Logo (optional)</label>
       <div class="flex items-center gap-2">
-        <img id="settingsProfilePreview" src="rico-finances-icon-192.png" alt="Current profile logo" class="w-12 h-12 rounded-full object-cover border border-iosBorderDark">
+        <img id="settingsProfilePreview" src="my-finances-icon-192.png" alt="Current profile logo" class="w-12 h-12 rounded-full object-cover border border-iosBorderDark">
         <label class="flex-1 cursor-pointer text-center py-2.5 rounded-xl bg-black/40 border border-iosBorderDark text-xs text-white" for="profileImageInput">Choose Photo</label>
         <button type="button" onclick="removeProfilePhoto()" class="px-3 py-2.5 rounded-xl bg-black/40 border border-iosBorderDark text-xs text-iosGray2">Reset</button>
         <input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" onchange="uploadProfilePhoto(event)" class="hidden">
       </div>
       <p id="personalizationMessage" aria-live="polite" class="text-[11px] text-iosGreen"></p>
-      <p class="text-[10px] text-iosGray">Your personalized name and photo appear in this app. The installed Home Screen icon caption may need to be renamed or added again separately.</p>
+      <p class="text-[10px] text-iosGray">Your personalized name and photo appear inside the app. The installed Home Screen name is My Finances. Existing Home Screen icons may need to be added again to display the new name and logo. Back up data before removing any installed app.</p>
     </div>
 </section>
 
@@ -332,12 +332,12 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
 </div>
 
 <script>
-const RICO_APP_VERSION = '1.7.1';
+const RICO_APP_VERSION = '1.7.2';
 let appServiceWorkerRegistration = null;
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js', { scope:'./', updateViaCache:'none' })
-      .then(reg => { appServiceWorkerRegistration = reg; console.info('Rico Finances offline worker registered.'); })
+      .then(reg => { appServiceWorkerRegistration = reg; console.info('My Finances offline worker registered.'); })
       .catch(err => console.warn('Offline installation unavailable:', err));
   });
 }
@@ -454,11 +454,20 @@ document.addEventListener('keydown', (e) => {
 
 // ----- Personalize only the local appearance, NEVER the finance transaction schema -----
 const PERSONALIZATION_KEY = 'rico_finances_preferences_v1';
-const DEFAULT_PERSONALIZATION = Object.freeze({ appName:'Rico Finances', displayName:'Boss Rico J.', photo:'' });
+const DEFAULT_PERSONALIZATION = Object.freeze({ appName:'My Finances', displayName:'Boss Rico J.', photo:'' });
 let personalization = loadPersonalization();
 function loadPersonalization() {
   try {
     const saved = JSON.parse(localStorage.getItem(PERSONALIZATION_KEY) || '{}');
+    // Upgrade the previous *default* app name once. Future manual customization remains unrestricted.
+    const migrationFlag = 'my_finances_name_upgrade_v1';
+    if (!localStorage.getItem(migrationFlag)) {
+      if (saved.appName === 'Rico Finances') {
+        saved.appName = 'My Finances';
+        localStorage.setItem(PERSONALIZATION_KEY, JSON.stringify(saved));
+      }
+      localStorage.setItem(migrationFlag, '1');
+    }
     return {
       appName: typeof saved.appName === 'string' && saved.appName.trim() ? saved.appName.trim().slice(0,40) : DEFAULT_PERSONALIZATION.appName,
       displayName: typeof saved.displayName === 'string' && saved.displayName.trim() ? saved.displayName.trim().slice(0,48) : DEFAULT_PERSONALIZATION.displayName,
@@ -469,9 +478,9 @@ function loadPersonalization() {
 function applyPersonalization() {
   document.getElementById('appHeaderTitle').textContent = personalization.appName;
   document.getElementById('footerAppName').textContent = personalization.appName;
-  document.title = personalization.appName + ' - Cash Flow Tracker';
-  document.getElementById('iosAppTitle').setAttribute('content', personalization.appName);
-  const photo = personalization.photo || 'rico-finances-icon-192.png';
+  // Keep the installed app name stable across devices. Personalization changes in-app labels only.
+  document.title = 'My Finances - Cash Flow Tracker';
+  const photo = personalization.photo || 'my-finances-icon-192.png';
   document.getElementById('profileLogo').src = photo;
   document.getElementById('settingsProfilePreview').src = photo;
   updateGreeting();

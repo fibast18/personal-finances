@@ -1,34 +1,39 @@
-RICO FINANCES v1.7.1 — COMPACT HEADER & AI POP-UP EDITION
-=============================================
+MY FINANCES v1.7.2 — OFFLINE GITHUB PAGES EDITION
+=================================================
 
-GITHUB PAGES INSTALL
-1. In the running app, tap Export FIRST and save a backup file of your financial records.
-2. Extract this ZIP. Upload ALL files from this folder to your existing GitHub repository at the same path (keep filenames and casing unchanged). Do not upload only index.html.
-3. Commit your updates and allow GitHub Pages to deploy.
-4. Open your existing GitHub Pages URL while ONLINE and use Check for App Update. Reopen to see v1.7.1.
-5. Test by turning on Airplane Mode, reopening the Home Screen app, and tapping the AI button beside the gear icon.
+WHAT CHANGED FROM RICO FINANCES v1.7.1
+- The iPhone Add to Home Screen title is now 'My Finances'.
+- The Android PWA manifest name and short name are now 'My Finances'.
+- The attached FINANCES / SMART WEALTH PLANNING & MANAGEMENT logo is used for Apple touch, Android install, and browser icons.
+- In-app default name is now 'My Finances'; other personalized names and uploaded profile photos remain supported.
+- Saved legacy default name 'Rico Finances' displays as 'My Finances', while other custom names are retained.
+- Developer credit still reads: Developed by: Engr. Rico J. Pono.
+- AI Analyst pop-up, gear personalization, 66px floating Add button, built-in icons/charts/styles and offline operation retained.
+- Offline cache updated to v1.7.2; financial transaction keys and backup schema unchanged.
 
-OFFLINE LIMITATIONS
-- The app must load successfully online once on every device for the service worker to install the complete app shell. A first-ever offline load on GitHub Pages is not possible.
-- Browser storage/cache can be cleared or evicted; never rely on the phone as the only backup.
-- Data and personalization are local to a particular browser/Home Screen app installation and are not synced across devices.
+DEPLOY TO GITHUB PAGES
+1. On EACH phone already using the app, open the app and choose Export to save a personal financial backup FIRST.
+2. Extract this ZIP and upload ALL of the enclosed app files directly into the same repository directory serving your GitHub Pages site (NOT the ZIP itself). Replace the old files. A missing file can break offline installation.
+3. Commit, wait for GitHub Pages to deploy, then open the existing site ONLINE and choose Check for App Update.
+4. Confirm the footer displays v1.7.2, then test offline.
+5. For the new icon and Home Screen name, add the UPDATED site to the Home Screen from Safari (iPhone) or Install App (Android). Previously installed icons may keep the old name and image.
+6. On iPhone, DO NOT remove the existing installed app until you've exported a backup. iOS can treat a re-added Home Screen web app as a different data container. If transactions don't appear, use Import to restore the exported file.
 
-FEATURES
-- Header app name and greeting at 1.2x the original text size (18px and 16.8px), down from 1.5x. Profile photo stays the same size.
-- AI popup closes with its X button, outside tap, or Escape; refreshed for the selected month when opened.
-- Preserved from v1.6.9: user-customizable app name, greeting and profile picture via the gear button; floating add control; 210 stickman animations; financial transactions, filtering, charts; JSON-compatible Export/Import; safe app update check.
-- Correct developer footer: "Developed by: Engr. Rico J. Pono".
-- Offline, free AI Analyst now opens from a small AI header button next to the settings gear; the main dashboard stays compact. Original read-only calculations retained: net monthly cash flow, income left after expenses, expense ratio, top spending, previous-month comparison, six-month expense history, major entries, suggestions and quick questions.
-- This Analyst uses a transparent rule-based engine, NOT a generative cloud AI model. No API keys or subscription needed; no finance data is sent to a server by the Analyst.
-- Recommendations depend on the completeness and correctness of the transactions you entered. Nothing in the Analyst changes financial records.
+DATA & COMPATIBILITY
+- URL and storage origin should remain the same to preserve existing transactions on current installations.
+- Existing localStorage keys are not renamed: rico_finances_txs, rico_finances_backup_fallback, rico_finances_last_export, rico_finances_preferences_v1.
+- Financial data is LOCAL to each browser/PWA installation, not synchronized or uploaded to GitHub.
+- Old user-uploaded profile photos remain in each device's preferences.
+- AI Analyst is a free offline rule-based calculator, not an online generative AI.
 
-LOCAL DATA KEYS (UNCHANGED)
-rico_finances_txs
-rico_finances_backup_fallback
-rico_finances_last_export
-rico_finances_preferences_v1
+OFFLINE & ACCESS LIMITATIONS
+- First visit/installation on each device MUST happen while online so the service worker can cache the entire app. Subsequent offline use depends on cached files remaining installed.
+- The GitHub Pages URL remains PUBLIC to anyone with the link. This package does NOT implement per-phone activation codes or a private access server.
+- Browser cache and storage can be cleared/evicted; back up transactions periodically.
 
-APP SHELL
-index.html, styles.css, icons.js, analyst.js, sw.js, manifest.webmanifest, version.json, apple-touch-icon.png, rico-finances-icon-192.png, rico-finances-icon-512.png
+PACKAGE FILES
+index.html, styles.css, icons.js, analyst.js, sw.js, manifest.webmanifest, version.json,
+my-finances-icon-192.png, my-finances-icon-512.png, my-finances-maskable-512.png,
+my-finances-apple-touch-icon.png, favicon-48.png, README.txt
 
-Rico Finances v1.7.1 | Developed by: Engr. Rico J. Pono
+Developed by: Engr. Rico J. Pono

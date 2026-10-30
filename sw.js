@@ -1,11 +1,12 @@
-// Rico Finances offline-first service worker — v1.7.1
+// My Finances offline-first service worker — v1.7.2
 // Works on GitHub Pages root sites and subdirectory project sites.
-const CACHE_NAME = 'rico-finances-v1.7.1';
+const CACHE_NAME = 'rico-finances-v1.7.2';
 const CACHE_PREFIX = 'rico-finances-';
 const APP_SHELL = [
   './', './index.html', './styles.css', './icons.js', './analyst.js',
   './manifest.webmanifest', './version.json',
-  './rico-finances-icon-192.png', './rico-finances-icon-512.png', './apple-touch-icon.png'
+  './my-finances-icon-192.png', './my-finances-icon-512.png', './my-finances-maskable-512.png',
+  './my-finances-apple-touch-icon.png', './favicon-48.png'
 ];
 
 self.addEventListener('install', event => {
@@ -58,7 +59,7 @@ self.addEventListener('fetch', event => {
       } catch (_error) {
         return (await caches.match('./index.html')) ||
                (await caches.match('./')) ||
-               new Response('Rico Finances requires one successful online installation.',
+               new Response('My Finances requires one successful online installation.',
                  {status:503, headers:{'Content-Type':'text/plain; charset=utf-8'}});
       }
     })());
