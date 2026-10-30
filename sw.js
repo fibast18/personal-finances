@@ -1,6 +1,6 @@
-// My Finances offline-first service worker — v1.7.2
+// My Finances offline-first service worker — v1.7.3
 // Works on GitHub Pages root sites and subdirectory project sites.
-const CACHE_NAME = 'rico-finances-v1.7.2';
+const CACHE_NAME = 'rico-finances-v1.7.3';
 const CACHE_PREFIX = 'rico-finances-';
 const APP_SHELL = [
   './', './index.html', './styles.css', './icons.js', './analyst.js',
@@ -42,8 +42,7 @@ self.addEventListener('fetch', event => {
         if (response.ok) return response;
         throw new Error('No online version');
       } catch (_) {
-        return (await caches.match('./version.json')) ||
-          new Response('{}', {status:503, headers:{'Content-Type':'application/json'}});
+        return new Response(JSON.stringify({error:'not-online'}), {status:503, headers:{'Content-Type':'application/json; charset=utf-8'}});
       }
     })());
     return;

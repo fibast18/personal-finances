@@ -22,7 +22,7 @@
 .pb-safe{padding-bottom:env(safe-area-inset-bottom,20px)}
 .pt-safe{padding-top:env(safe-area-inset-top,20px)}
 
-/* My Finances v1.7.2 core controls: inline so an older CSS cache cannot enlarge profile photo. */
+/* My Finances v1.7.3 core controls: inline so an older CSS cache cannot enlarge profile photo. */
 #appHeader{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.94);border-bottom:1px solid #2c2c2e;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 #appHeader .app-header-inner{width:100%;max-width:448px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;box-sizing:border-box}
 #appHeader .app-header-primary{display:flex!important;justify-content:space-between;align-items:center;gap:10px;min-width:0}
@@ -206,7 +206,7 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
 
 <footer class="max-w-md mx-auto w-full px-4 py-4 text-center">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-iosCardDark border border-iosBorderDark text-[11px] text-iosGray">
-    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">My Finances</span><span class="text-iosGray2 font-medium">v1.7.2</span>
+    <span class="w-1.5 h-1.5 rounded-full bg-iosGreen"></span><span id="footerAppName">My Finances</span><span class="text-iosGray2 font-medium">v1.7.3</span>
   </div>
   <p class="text-[10px] text-iosGray/60 mt-1.5">Personal finance tracker &bull; 210 Borderless Sports Actions</p>
   <p id="developerCredit" class="mt-2 text-[11px] text-iosGray2 font-medium">Developed by: Engr. Rico J. Pono</p>
@@ -287,6 +287,24 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
   </div>
 </div>
 
+<!-- Safe iPhone backup options: data is never uploaded to a server. -->
+<div id="backupOptionsDialog" class="hidden" role="dialog" aria-modal="true" aria-labelledby="backupOptionsTitle" style="position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.85);padding:calc(20px + env(safe-area-inset-top,0px)) 12px calc(20px + env(safe-area-inset-bottom,0px));overflow-y:auto;align-items:center;justify-content:center">
+  <div style="background:#1c1c1e;color:#fff;border:1px solid #3a3a3d;border-radius:22px;padding:18px;max-width:430px;width:100%;margin:auto;box-sizing:border-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <h2 id="backupOptionsTitle" style="font-size:18px;font-weight:700;margin:0">Export your financial backup</h2>
+      <button type="button" onclick="closeBackupOptions()" aria-label="Close backup options" style="color:#fff;border-radius:50%;background:#36363a;width:35px;height:35px;font-size:22px">×</button>
+    </div>
+    <p id="backupOptionsMessage" style="font-size:12px;color:#c7c7cc;margin:12px 0;line-height:1.5">Choose a backup method. Confirm the file was saved before removing or reinstalling the app.</p>
+    <div style="display:grid;gap:9px">
+      <button type="button" onclick="downloadBackupFile()" style="background:#0a84ff;color:white;font-weight:700;padding:12px;border-radius:14px">Save / Download backup file</button>
+      <button type="button" onclick="copyBackupText()" style="background:#36363b;color:white;font-weight:650;padding:12px;border-radius:14px">Copy backup text</button>
+    </div>
+    <p style="font-size:11px;line-height:1.5;color:#aeaeb2;margin-top:12px">If downloading does not work in an iPhone Home Screen app, copy the text below into Notes or another document and keep it safe. To restore, save it as a .json file and choose Import. Backup contains your private financial records.</p>
+    <textarea id="backupPreviewText" readonly aria-label="Financial backup text" style="margin-top:8px;width:100%;height:100px;box-sizing:border-box;background:#101014;color:#e5e5e5;font-size:11px;border:1px solid #48484a;border-radius:12px;padding:10px"></textarea>
+    <button type="button" onclick="confirmBackupSaved()" style="margin-top:12px;width:100%;background:#25392c;color:#9bffb5;font-weight:650;padding:10px;border-radius:14px">I saved a copy</button>
+  </div>
+</div>
+
 <!-- Transaction Modal -->
 <div id="transactionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
   <div class="bg-iosCardDark border border-iosBorderDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[90vh] overflow-y-auto">
@@ -332,7 +350,7 @@ body.personalization-open,body.ai-analyst-open{overflow:hidden;touch-action:pan-
 </div>
 
 <script>
-const RICO_APP_VERSION = '1.7.2';
+const RICO_APP_VERSION = '1.7.3';
 let appServiceWorkerRegistration = null;
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
@@ -342,26 +360,43 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 async function checkForAppUpdates() {
-  if (!navigator.onLine) { alert('You are offline. Your finance tracker is available offline. Reconnect to check for new versions.'); return; }
+  // Check server metadata FIRST; a failed worker update must not hide whether a new version exists.
   try {
-    const initialRegistration = appServiceWorkerRegistration || ('serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration('./') : null);
-    if (initialRegistration) await initialRegistration.update();
-    const response = await fetch('./version.json?check=' + Date.now(), {cache:'no-store'});
-    if (!response.ok) throw new Error('Version information unavailable');
-    const details = await response.json();
-    if (!details.version || !/^\d+\.\d+\.\d+$/.test(details.version)) throw new Error('Invalid version information');
+    const url = new URL('./version.json?check=' + Date.now(), location.href);
+    const response = await fetch(url.href, { cache:'no-store' });
+    if (!response.ok) throw new Error('Version file unavailable (HTTP ' + response.status + '). Verify version.json is uploaded to the same GitHub Pages folder as index.html.');
+    let details;
+    try { details = await response.json(); }
+    catch (_) { throw new Error('version.json was not valid JSON. Check that GitHub Pages has deployed the full app folder.'); }
+    if (!details.version || !/^\d+\.\d+\.\d+$/.test(details.version)) {
+      throw new Error('Version file does not contain a valid version number.');
+    }
     if (details.version === RICO_APP_VERSION) {
-      if (appServiceWorkerRegistration) await appServiceWorkerRegistration.update();
-      alert('Version ' + RICO_APP_VERSION + ' is up to date. Offline files stay safely installed.');
+      alert('My Finances v' + RICO_APP_VERSION + ' is current. Your transactions remain on this phone.');
       return;
     }
-    const reg = appServiceWorkerRegistration || await navigator.serviceWorker.getRegistration('./');
-    if (reg) await reg.update();
-    alert('Version ' + details.version + ' is available. The app will reload to use the latest files. Your saved transactions remain on this device.');
+    const serverParts = details.version.split('.').map(Number);
+    const localParts = RICO_APP_VERSION.split('.').map(Number);
+    const newer = serverParts.findIndex((value, i) => value !== localParts[i]);
+    if (newer >= 0 && serverParts[newer] < localParts[newer]) {
+      alert('Installed v' + RICO_APP_VERSION + ' is newer than the server v' + details.version + '. Check the GitHub Pages deployment before replacing app files.');
+      return;
+    }
+    let workerWarning = '';
+    try {
+      const reg = appServiceWorkerRegistration ||
+        ('serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration('./') : null);
+      if (reg) await reg.update();
+    } catch (workerError) {
+      console.warn('Service worker refresh failed:', workerError);
+      workerWarning = '\n\nOffline cache refresh could not be confirmed. Keep internet on until the new version loads.';
+    }
+    alert('My Finances v' + details.version + ' is available. The app will reload. Your locally stored transactions will not be deliberately changed.' + workerWarning);
     location.reload();
   } catch (err) {
-    alert('Could not check for updates. Your installed offline app and transactions remain unchanged.');
-    console.warn(err);
+    console.warn('My Finances update check failed:', err);
+    alert('Update check failed: ' + (err && err.message ? err.message : 'Network error') +
+      '\n\nVerify internet access and open the GitHub Pages website in Safari. Do not delete your existing app or its records.');
   }
 }
 </script>
@@ -894,13 +929,80 @@ function updateBackupInfo() {
     banner.classList.remove('hidden');
   } else banner.classList.add('hidden');
 }
-function exportData() {
-  const a = document.createElement('a');
-  a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
-  a.download = `rico_finances_backup_${todayLocal()}.json`;
-  document.body.appendChild(a); a.click(); a.remove();
+// Robust offline backup: preserve original JSON-array schema and local storage keys.
+// On iOS, share a real file via the native sheet when possible. Provide visible options otherwise.
+let preparedBackupFile = null;
+let preparedBackupText = '';
+function prepareBackup() {
+  preparedBackupText = JSON.stringify(transactions, null, 2);
+  const filename = `my_finances_backup_${todayLocal()}.json`;
+  preparedBackupFile = new File([preparedBackupText], filename, {type:'application/json'});
+  document.getElementById('backupPreviewText').value = preparedBackupText;
+}
+function openBackupOptions(message) {
+  document.getElementById('backupOptionsMessage').textContent = message ||
+    'Save a copy of this backup before deleting or reinstalling your app.';
+  const dialog = document.getElementById('backupOptionsDialog');
+  dialog.classList.remove('hidden'); dialog.style.display = 'flex';
+}
+function closeBackupOptions() {
+  const dialog = document.getElementById('backupOptionsDialog');
+  dialog.style.display = 'none'; dialog.classList.add('hidden');
+}
+function confirmBackupSaved() {
   localStorage.setItem('rico_finances_last_export', String(Date.now()));
-  updateBackupInfo();
+  updateBackupInfo(); closeBackupOptions();
+}
+async function exportData() {
+  try {
+    prepareBackup();
+    // This share() call is made directly from the tap handler to preserve iOS user activation.
+    if (navigator.share && (!navigator.canShare || navigator.canShare({files:[preparedBackupFile]}))) {
+      try {
+        await navigator.share({files:[preparedBackupFile], title:'My Finances backup'});
+        openBackupOptions('If you saved the backup using the share sheet, tap "I saved a copy". Otherwise use Save / Download or Copy below.');
+        return;
+      } catch (shareError) {
+        console.info('File sharing unavailable or cancelled:', shareError);
+      }
+    }
+    openBackupOptions('Choose Save / Download or Copy. The previous download method may fail silently inside an iPhone Home Screen app.');
+  } catch (err) {
+    alert('Backup preparation failed: ' + (err?.message || 'Unknown error') + '. Your original records remain on this device.');
+  }
+}
+function downloadBackupFile() {
+  if (!preparedBackupFile) prepareBackup();
+  try {
+    const objectUrl = URL.createObjectURL(preparedBackupFile);
+    const link = document.createElement('a');
+    link.href = objectUrl; link.download = preparedBackupFile.name;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+    document.getElementById('backupOptionsMessage').textContent =
+      'Download requested. Check Files / Downloads for ' + preparedBackupFile.name + '. If it did not save, use Copy backup text. Only choose "I saved a copy" after verifying.';
+  } catch (err) {
+    document.getElementById('backupOptionsMessage').textContent =
+      'The download could not start. Please use Copy backup text or manually select the text below.';
+  }
+}
+async function copyBackupText() {
+  if (!preparedBackupText) prepareBackup();
+  const area = document.getElementById('backupPreviewText');
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+    await navigator.clipboard.writeText(preparedBackupText);
+    document.getElementById('backupOptionsMessage').textContent =
+      'Backup copied. Paste it into a secure note or document and save it. Do not paste financial data into public chats.';
+  } catch (_) {
+    area.focus(); area.select(); area.setSelectionRange(0, area.value.length);
+    const copied = document.execCommand && document.execCommand('copy');
+    document.getElementById('backupOptionsMessage').textContent = copied
+      ? 'Backup copied. Paste it into a secure note or document and save it.'
+      : 'Select and copy all the backup text below manually, then save it in a secure note or document.';
+  }
 }
 function importData(event) {
   const file = event.target.files[0];

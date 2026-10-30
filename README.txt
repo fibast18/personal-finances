@@ -1,39 +1,50 @@
-MY FINANCES v1.7.2 — OFFLINE GITHUB PAGES EDITION
-=================================================
+MY FINANCES v1.7.3 — SAFE IPHONE EXPORT + UPDATE CHECK REPAIR
+=========================================================
 
-WHAT CHANGED FROM RICO FINANCES v1.7.1
-- The iPhone Add to Home Screen title is now 'My Finances'.
-- The Android PWA manifest name and short name are now 'My Finances'.
-- The attached FINANCES / SMART WEALTH PLANNING & MANAGEMENT logo is used for Apple touch, Android install, and browser icons.
-- In-app default name is now 'My Finances'; other personalized names and uploaded profile photos remain supported.
-- Saved legacy default name 'Rico Finances' displays as 'My Finances', while other custom names are retained.
-- Developer credit still reads: Developed by: Engr. Rico J. Pono.
-- AI Analyst pop-up, gear personalization, 66px floating Add button, built-in icons/charts/styles and offline operation retained.
-- Offline cache updated to v1.7.2; financial transaction keys and backup schema unchanged.
+IMPORTANT: DO NOT DELETE THE OLD HOME SCREEN APP OR CLEAR SAFARI WEBSITE DATA.
+Financial records are held locally in each app installation, not stored in GitHub.
 
-DEPLOY TO GITHUB PAGES
-1. On EACH phone already using the app, open the app and choose Export to save a personal financial backup FIRST.
-2. Extract this ZIP and upload ALL of the enclosed app files directly into the same repository directory serving your GitHub Pages site (NOT the ZIP itself). Replace the old files. A missing file can break offline installation.
-3. Commit, wait for GitHub Pages to deploy, then open the existing site ONLINE and choose Check for App Update.
-4. Confirm the footer displays v1.7.2, then test offline.
-5. For the new icon and Home Screen name, add the UPDATED site to the Home Screen from Safari (iPhone) or Install App (Android). Previously installed icons may keep the old name and image.
-6. On iPhone, DO NOT remove the existing installed app until you've exported a backup. iOS can treat a re-added Home Screen web app as a different data container. If transactions don't appear, use Import to restore the exported file.
+REPAIRS
+- Export now invokes native iPhone share sheet with a real .json File, when supported.
+- If the share sheet is unavailable, Export opens a Backup Options dialog with
+  Download and Copy backup text alternatives, plus a preview of the original JSON array.
+- The backup timestamp changes only after user confirms a copy was saved.
+- Update checker requests version.json BEFORE updating the service worker, and
+  reports specific version-file/network failures rather than one generic error.
+- Offline worker keeps version metadata checks truthful if there is no internet.
+- Preserves all v1.7.2 finance features, original storage keys, AI Analyst,
+  custom app name/greeting/photo, header, floating Add, and user-provided app logo.
 
-DATA & COMPATIBILITY
-- URL and storage origin should remain the same to preserve existing transactions on current installations.
-- Existing localStorage keys are not renamed: rico_finances_txs, rico_finances_backup_fallback, rico_finances_last_export, rico_finances_preferences_v1.
-- Financial data is LOCAL to each browser/PWA installation, not synchronized or uploaded to GitHub.
-- Old user-uploaded profile photos remain in each device's preferences.
-- AI Analyst is a free offline rule-based calculator, not an online generative AI.
+TO INSTALL ON EXISTING GITHUB PAGES SITE
+1. Upload all 13 actual app files (not this ZIP) to the SAME public Pages folder.
+   You can replace repository app files; this does not delete data on users' phones.
+2. Commit and wait for the site deployment to complete.
+3. In Safari, visit YOUR_GITHUB_PAGES_URL/version.json (project page: /repo/version.json)
+   and confirm that the JSON says version 1.7.3. HTTP 404 means the file isn't deployed
+   at the address you're checking.
+4. On the EXISTING installed app, stay online. Completely close it, then reopen it.
+   Its earlier service worker uses network-first navigation, so it should get new HTML
+   if the GitHub Pages deployment and connection are working.
+5. Confirm the footer says v1.7.3, then tap Export and follow the iPhone share sheet
+   or Backup Options to SAVE an actual personal copy of the transactions.
+6. Verify the backup file exists in Files before removing or reinstalling anything.
+7. Reopen offline AFTER at least one successful online load and cache install.
 
-OFFLINE & ACCESS LIMITATIONS
-- First visit/installation on each device MUST happen while online so the service worker can cache the entire app. Subsequent offline use depends on cached files remaining installed.
-- The GitHub Pages URL remains PUBLIC to anyone with the link. This package does NOT implement per-phone activation codes or a private access server.
-- Browser cache and storage can be cleared/evicted; back up transactions periodically.
+IF THE APP STILL SHOWS v1.7.1
+- Check version.json at your live GitHub Pages URL in Safari.
+- Check that Pages points to the branch/folder you updated (Settings > Pages).
+- DO NOT delete your Home Screen app: existing offline and finance data may be lost.
+- Try an online close/relaunch after confirming version.json on the website.
 
-PACKAGE FILES
-index.html, styles.css, icons.js, analyst.js, sw.js, manifest.webmanifest, version.json,
-my-finances-icon-192.png, my-finances-icon-512.png, my-finances-maskable-512.png,
-my-finances-apple-touch-icon.png, favicon-48.png, README.txt
+BACKUP FORMAT
+JSON array identical to previous Export/Import, preserving compatibility.
+Data keys remain rico_finances_txs and rico_finances_backup_fallback.
+No financial transaction data is sent to the activation server or GitHub.
+
+LIMITS
+First installation needs internet. GitHub Pages is currently publicly accessible;
+private one-time activation codes are NOT provided in this version.
+Native iPhone share / Files UI depends on iOS and browser support.
+The share sheet or download request is NOT proof of saved backup: verify in Files.
 
 Developed by: Engr. Rico J. Pono
